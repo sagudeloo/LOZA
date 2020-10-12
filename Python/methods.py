@@ -2,23 +2,52 @@ import numpy as np
 import numpy.matlib
 
 
-def gaussSpl(Ma, b):
-    #Getting matrix dimention
+def gaussSimple(Ma, b):
+    # Getting matrix dimention
     n = len(Ma)
-    #Adding the the vector B at the end of the matrix
+
+    # Adding the the vector B at the end of the matrix
     matrixMa = np.matrix(Ma)
     vectorB = np.array(b)
     M = np.column_stack((matrixMa,vectorB))
+
+    # Matrix reduction
     for i in range(n-1):
         for j in range(i+1,n):
             if (M[j,i] != 0):
                 M[j,i:n+1]=M[j,i:n+1]-(M[j,i]/M[i,i])*M[i,i:n+1]
     return backSust(M)
 
+def gaussPartialPivot(Ma, b):
+    #Getting matrix dimention
+    n = len(Ma)
+
+    #Adding the the vector B at the end of the matrix
+    matrixMa = np.matrix(Ma)
+    vectorB = np.array(b)
+    M = np.column_stack((matrixMa,vectorB))
+    # Matrix reduction
+    for i in range(n-1):
+        # Row swaping
+        maxV = float('-inf')    # Max value in the column
+        maxI = None             # Index of the max value
+        for j in range(i,n):
+            if(maxV<abs(M[j,i])):
+                maxV = M[j,i]
+                maxI = j
+        if (maxV>abs(M[i,i])):
+            aux = np.copy(M[maxI,i:n+1])
+            M[maxI,i:n+1] = M[i,i:n+1]
+            M[i,i:n+1] = aux
+        for j in range(i+1,n):
+            if (M[j,i] != 0):
+                M[j,i:n+1]=M[j,i:n+1]-(M[j,i]/M[i,i])*M[i,i:n+1]
+    return backSust(M)
+
 def backSust(M):
-    #Getting  matrix dimention
+    # Getting  matrix dimention
     n = len(M)
-    #Initializing a zero vector
+    # Initializing a zero vector
     x = np.matlib.zeros((n,1))
     x[n-1]=M[n-1,n]/M[n-1,n-1]
     for i in range(n-2, -1, -1):
@@ -26,3 +55,4 @@ def backSust(M):
         aux2 = np.hstack((M[i,n], np.asarray(-M[i,i+1:n]).reshape(-1)))
         x[i] = np.dot(aux1,aux2)/M[i,i]
     return x
+
