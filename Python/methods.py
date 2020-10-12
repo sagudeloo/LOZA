@@ -1,14 +1,6 @@
 import numpy as np
 import numpy.matlib
 
-matrix=[[2, -1, 0, 3],
-        [1, 0.5, 3, 8],
-        [14, 5, -2, 3],
-        [0, 13, -2, 11]]
-vector=[[1],
-        [1],
-        [1],
-        [1]]
 
 def gaussSpl(Ma, b):
     #Getting matrix dimention
@@ -34,6 +26,3 @@ def backSust(M):
         aux2 = np.hstack((M[i,n], np.asarray(-M[i,i+1:n]).reshape(-1)))
         x[i] = np.dot(aux1,aux2)/M[i,i]
     return x
-
-
-gaussSpl(matrix, vector)
