@@ -115,12 +115,3 @@ def backSubst(M):
         aux2 = np.hstack((M[i,n], np.asarray(-M[i,i+1:n]).reshape(-1)))
         x[i] = np.dot(aux1,aux2)/M[i,i]
     return x
-
-matrix = [[2,-1,0,3],
-         [1,0.5,3,8],
-         [0,13,-2,11],
-         [14,5,-2,3]]
-
-vector = [1,1,1,1]
-
-print(gaussTotalPivot(matrix,vector))
