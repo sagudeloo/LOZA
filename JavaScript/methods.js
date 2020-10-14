@@ -4,6 +4,7 @@ math = require("./node_modules/mathjs/dist/math.js");
 
 class methods {
   static busquedasIncrementales(fx, x0, delta, maxNum) {
+    console.log("Busquedas Incrementales: ")
     let x = x0;
     let i = 0;
     let f = 0.1;
@@ -21,61 +22,14 @@ class methods {
         f = f(x);
       }
       if (f * f0 < 0) {
-        console.log("Hay una raiz de f en i: " + i);
-        console.log("a: " + x0);
-        console.log("b: " + x);
+        console.log("Hay una raiz de f en: " + "[" +x0+","+x+"]");
       }
       i = i + 1;
     }
-  }
-
-  static busquedasIncrementales(fx, x0, delta, maxNum) {
-    console.log("Busquedas Incrementales");
-    let x = x0;
-    let i = 0;
-    let f = 0.1;
-    let f0 = 0.1;
-    while (i < maxNum) {
-      if (i == 0) {
-        f = math.evaluate(fx);
-        f = f(x);
-        f0 = f;
-      } else {
-        x0 = x;
-        x = x + delta;
-        f0 = f;
-        f = math.evaluate(fx);
-        f = f(x);
-      }
-      if (f * f0 < 0) {
-        console.log("Hay una raiz de f en [" + x0 + "," + x + "]");
-      }
-      i = i + 1;
-    }
-
-    xm0 = xm;
-    xm = (a + b) / 2;
-    fa = math.evaluate(fx);
-    fm = fa(xm);
-    fa = fa(a);
-    error = math.abs(xm - xm0);
-    //Valor de check
-    if (fm * fa < 0) {
-      check = -1;
-    } else {
-      check = 1;
-    }
-    console.log("i: " + i);
-    console.log("a: " + a);
-    console.log("xm: " + xm);
-    console.log("b: " + b);
-    console.log("f(xm): " + fm);
-    console.log("E: " + error);
-    i = i + 1;
   }
 
   static biseccion(fx, a, b, maxNum) {
-    console.log("Biseccion");
+    console.log("Biseccion: ");
 
     let cond = 0.0000001;
     let i = 1;
@@ -136,22 +90,10 @@ class methods {
       );
       i = i + 1;
     }
-    xm0 = xm;
-    fa = f(a);
-    fb = f(b);
-    xm = (fb * a - fa * b) / (fb - fa);
-    error = math.abs(xm - xm0);
-    console.log("i: " + i);
-    console.log("a: " + a);
-    console.log("xm: " + xm);
-    console.log("b: " + b);
-    console.log("f(xm): " + fm);
-    console.log("E: " + error);
-    i = i + 1;
   }
 
   static reglaFalsa(fx, a, b, maxNum) {
-    console.log("Regla Falsa");
+    console.log("Regla Falsa:");
 
     let cond = 0.0000001;
     let i = 1;
@@ -207,7 +149,7 @@ class methods {
   }
 
   static puntoFijo(fx, gx, x0, maxNum) {
-    console.log("Punto Fijo");
+    console.log("Punto Fijo:");
 
     let cond = 0.0000001;
     let error = 1;
@@ -267,7 +209,7 @@ class methods {
   }
 
   static newton(x0, fx, dx, maxNum) {
-    console.log("Newton");
+    console.log("Newton:");
 
     let error = 1;
     let i = 0;
@@ -315,7 +257,7 @@ class methods {
   }
 
   static secante(x0, x1, fx, maxNum) {
-    console.log("Secante");
+    console.log("Secante:");
 
     let error = 1;
     let i = 0;
@@ -375,7 +317,7 @@ class methods {
   }
 
   static raicesMultiples(fx, fdx, f2dx, x0, maxNum) {
-    console.log("Raices Multiples");
+    console.log("Raices Multiples:");
 
     let cond = 0.0000001;
     let x = x0;
