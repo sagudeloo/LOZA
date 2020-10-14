@@ -1,21 +1,20 @@
 from sympy import *
-def mulRoots(x0, numMax):
+def mulRoots(fx, x0, numMax):
  x = Symbol('x')
  i = 0
  cond = 0.0000001
  error = 1.0000000    
 
- print("Ingrese el polinomio de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
- fx = input("Aqui : ")
  ex = sympify(fx)
 
  d_ex = diff(ex, x)
  d2_ex = diff(d_ex, x)
  
  y = x0
- ex_2 = ex
- d_ex2 = ex
- d2_ex2 = ex 
+ ex_2 = 0
+ ex_3 = 0
+ d_ex2 = 0
+ d2_ex2 = 0 
 
  while error > cond and i < numMax:
      if i == 0:
@@ -25,36 +24,31 @@ def mulRoots(x0, numMax):
          d_ex2 = d_ex.subs(x,x0)
          d_ex2 = d_ex2.evalf()
 
-         d2_ex2 = d2_ex2.subs(x,x0)
+         d2_ex2 = d2_ex.subs(x,x0)
          d2_ex2 = d2_ex2.evalf()
-
-         y2 = sympify(y)   
-         y = y2 - ((ex_2 * d_ex2)/ Pow(d_ex2,2) - (ex_2*d2_ex2))
+  
+         y = y - ((ex_2 * d_ex2)/ Pow(d_ex2,2) - (ex_2*d2_ex2))
          
-         ex_2 = ex_2.subs(x0,y) 
-         ex_2 = ex_2.evalf()
+         ex_3 = ex.subs(x,y) 
+         ex_3 = ex_3.evalf()
+         
          error = Abs(y - x0)
          er = sympify(error)
-         er.evalf()
-         error = er
-         ex = ex_2
+         error = er.evalf()
+         
+         
+         ex_2 = ex_3
          x0 = y
      i += 1     
 
- print("i : " + str(i))
- print("xi : " + str(y))
- print("f(xi) : " + str(ex))
- print("error : " + str(error))
  return   
  
-def newton(x0, numMax):
+def newton(fx, x0, numMax):
  x = Symbol('x')
  i = 0
  cond = 0.0000001
  error = 1.0000000    
 
- print("Ingrese el polinomio de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
- fx = input("Aqui : ")
  ex = sympify(fx)
 
  d_ex = diff(ex, x)
@@ -88,27 +82,19 @@ def newton(x0, numMax):
          x0 = y
      i += 1     
 
- print("i : " + str(i))
- print("xi : " + str(y))
- print("f(xi) : " + str(ex))
- print("error : " + str(error))
  return 
 
-def puntoFijo(x0, numMax):
+def puntoFijo(fx, gx, x0, numMax):
  x = Symbol('x')
  i = 0
  cond = 0.0000001
  error = 1.0000000    
 
- print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
- fx = input("Aqui : ")
  ex = sympify(fx)
  
  y = x0
  ex_2 = 0
 
- print("Ingrese el polinomio g(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
- gx = input("Aqui : ")
  rx = sympify(gx)
 
  rx_2 = 0
@@ -137,20 +123,13 @@ def puntoFijo(x0, numMax):
             
          x0 = y
          
-         print("i : " + str(i))
-         print("xi : " + str(y))
-         print("f(xi) : " + str(ex_2))
-         print("g(xi) : " + str(rx_2))
-         print("error : " + str(error))
      i += 1     
  return
 
-def busIncrem(x0, d, numMax):
+def busIncrem(fx, xo, d, numMax):
  x = Symbol('x')
  i = 0 
 
- print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
- fx = input("Aqui : ")
  ex = sympify(fx)
 
  y = x0
@@ -170,20 +149,16 @@ def busIncrem(x0, d, numMax):
          ex_2 = ex_2.evalf()
          
          if (ex_2*ex_3 < 0):
-              print("Hay una raiz de f en i: " + str(i))
-              print("a : " + str(ex_3))
-              print("b : " + str(ex_2))
+              print("identificador ")
               
      i += 1     
  return
-def bisec(a, b, numMax):
+def bisec(a, b, fx, numMax):
  x = Symbol('x')
  i = 1 
  cond = 0.0000001
  error = 1.0000000 
 
- print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
- fx = input("Aqui : ")
  ex = sympify(fx)
 
  xm = 0
@@ -227,22 +202,14 @@ def bisec(a, b, numMax):
          else:
              w = 1    
      i += 1
- print("i : " + str(i))
- print("a : " + str(a))
- print("xm : " + str(xm))
- print("b : " + str(b))
- print("f(xm) : " + str(ex_3))
- print("error : " + str(error))
  return     
 
-def reglaFalsa(a, b, numMax):
+def reglaFalsa(a, b, fx, numMax):
  x = Symbol('x')
  i = 1 
  cond = 0.0000001
  error = 1.0000000 
 
- print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
- fx = input("Aqui : ")
  ex = sympify(fx)
 
  xm = 0
@@ -290,22 +257,14 @@ def reglaFalsa(a, b, numMax):
          er = sympify(error)
          error = er.evalf()   
      i += 1
- print("i : " + str(i))
- print("a : " + str(a))
- print("xm : " + str(xm))
- print("b : " + str(b))
- print("f(xm) : " + str(ex_3))
- print("error : " + str(error))
  return    
 
-def secan(x0, x1, numMax):
+def secan(x0, x1, fx, numMax):
  x = Symbol('x')
  i = 0
  cond = 0.0000001
  error = 1.0000000    
 
- print("Ingrese el polinomio de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
- fx = input("Aqui : ")
  ex = sympify(fx)
 
  y = x0
@@ -336,11 +295,6 @@ def secan(x0, x1, numMax):
          er = sympify(error)
          error = er.evalf()  
      i += 1     
-
- print("i : " + str(i))
- print("x : " + str(x1))
- print("f : " + str(ex_1))
- print("error : " + str(error))
  return
 
  
