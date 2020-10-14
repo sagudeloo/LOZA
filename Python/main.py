@@ -7,20 +7,23 @@ def main(fx):
         x0 = float(x0)
         numMax=input("Ingrese el número máximo de iteraciones")
         numMax = int(numMax)
-        methods.mulRoots(fx,x0,numMax)
+        output = methods.mulRoots(fx,x0,numMax)
+        print(methods.outputToString(output))
     elif x=="2":
         x0=input("Ingrese el valor inicial de x")
         x0 = float(x0)
         numMax=input("Ingrese el número máximo de iteraciones")
         numMax = int(numMax)
-        methods.newton(fx, x0, numMax)
+        output = methods.newton(fx, x0, numMax)
+        print(methods.outputToString(output))
     elif x=="3":
         x0=input("Ingrese el valor inicial de x")
         x0 = float(x0)
         numMax=input("Ingrese el número máximo de iteraciones")
         numMax = int(numMax)
         gx = input("Ingrese la función g(x)")
-        methods.puntoFijo(fx, gx, x0, numMax)
+        output = methods.puntoFijo(fx, gx, x0, numMax)
+        print(methods.outputToString(output))
     elif x=="4":
         x0=input("Ingrese el valor inicial de x")
         x0 = float(x0)
@@ -28,7 +31,8 @@ def main(fx):
         numMax = int(numMax)
         d = input("Ingrese el valor delta")
         d = float(d)
-        methods.busIncrem(fx, x0, d,numMax)
+        output = methods.busIncrem(fx, x0, d,numMax)
+        print(methods.outputToString(output))
     elif x=="5":
         a = input("Ingrese el valor a")
         a = float(a)
@@ -36,7 +40,8 @@ def main(fx):
         b = float(b)
         numMax=input("Ingrese el número máximo de iteraciones")
         numMax = int(numMax)
-        methods.bisec(a, b, fx, numMax)              
+        output = methods.bisec(a, b, fx, numMax)
+        print(methods.outputToString(output))              
     elif x=="6":
         a = input("Ingrese el valor a")
         a = float(a)
@@ -44,7 +49,8 @@ def main(fx):
         b = float(b)
         numMax=input("Ingrese el número máximo de iteraciones")
         numMax = int(numMax)
-        methods.reglaFalsa(a,b,fx,numMax)
+        output = methods.reglaFalsa(a,b,fx,numMax)
+        print(methods.outputToString(output))
     elif x=="7":
         x0 = input("Ingrese el valor inicial de la serie")
         x0 = float(x0)
@@ -52,7 +58,8 @@ def main(fx):
         x1 = float(x1)
         numMax = input("Ingrese el número máximo de iteraciones")
         numMax = int(numMax)
-        methods.secan(x0,x1,fx,numMax)
+        output = methods.secan(x0,x1,fx,numMax)
+        print(methods.outputToString(output))
     else:
         print("Método inexistente o número mal digitado.")
 

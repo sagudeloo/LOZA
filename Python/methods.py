@@ -6,7 +6,7 @@ def mulRoots(fx, x0, numMax):
     output = {
         "type": 1,
         "method": "Multi Roots",
-        "colums": ["iter","xi","f(xi)","E" ]
+        "columns": ["iter","xi","f(xi)","E" ]
     }
     results = list()
     x = Symbol('x')
@@ -61,7 +61,7 @@ def newton(fx, x0, numMax):
     output = {
         "type": 1,
         "method": "Newton",
-        "colums": ["iter","xi","f(xi)","E" ]
+        "columns": ["iter","xi","f(xi)","E" ]
     }
     results = list()
     x = Symbol('x')
@@ -114,7 +114,7 @@ def puntoFijo(fx, gx, x0, numMax):
     output = {
         "type": 1,
         "method": "Fixed point",
-        "colums": ["iter","xi","f(xi)","E" ]
+        "columns": ["iter","xi","f(xi)","E" ]
     }
     results = list()
     x = Symbol('x')
@@ -168,7 +168,7 @@ def puntoFijo(fx, gx, x0, numMax):
 def busIncrem(fx, x0, d, numMax):
 
     output = {
-        "type": 1,
+        "type": 0,
         "method": "Incremental Search",
     }
     results = list()
@@ -205,7 +205,7 @@ def bisec(a, b, fx, numMax):
     output = {
         "type": 1,
         "method": "Bisection",
-        "colums": ["iter","a","xm", "b","f(xm)","E" ]
+        "columns": ["iter","a","xm", "b","f(xm)","E" ]
     }
     results = list()
     x = Symbol('x')
@@ -268,7 +268,7 @@ def reglaFalsa(a, b, fx, numMax):
     output = {
         "type": 1,
         "method": "Regula falsi",
-        "colums": ["iter","a","xm", "b","f(xm)","E" ]
+        "columns": ["iter","a","xm", "b","f(xm)","E" ]
     }
     results = list()
     x = Symbol('x')
@@ -334,7 +334,7 @@ def secan(x0, x1, fx, numMax):
     output = {
         "type": 1,
         "method": "Secant",
-        "colums": ["iter", "xi", "f(xi)","E" ]
+        "columns": ["iter", "xi", "f(xi)","E" ]
     }
     results = list()
     x = Symbol('x')
@@ -536,9 +536,9 @@ def backSubst(M):
 
 
 def outputToString(output):
-    if(output["type"]):
+    if(output["type"]==0):
         return outputIncrementalSearch(output)
-    elif (output["type"]):
+    elif (output["type"]==1):
         return outputanalyticalMethod(output)
     else:
         return outputGauss(output)
@@ -551,6 +551,7 @@ def outputIncrementalSearch(output):
     for i in results:
         stringOutput += f'There is a root of f in {i}\n'
     stringOutput += "\n______________________________________________________________\n"
+    return stringOutput
 
 
 def outputanalyticalMethod(output):
@@ -561,6 +562,7 @@ def outputanalyticalMethod(output):
         stringOutput += '|{:15}'.format(i)
     stringOutput += "|\n"
     results = output["results"]
+    print(results)
     for j in results:
         for k in j:
             stringOutput += '|{:15E}'.format(k)
@@ -570,6 +572,7 @@ def outputanalyticalMethod(output):
     else:
         stringOutput = f'\nAn approximation of the root was not found in {output["iterations"]}\n'
     stringOutput += "\n______________________________________________________________\n"
+    return stringOutput
 
 
 def outputGauss(output):
