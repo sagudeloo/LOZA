@@ -1,9 +1,7 @@
 import numpy as np
 import numpy.matlib
 from sympy import *
-
-
-def mulRoots(x0, numMax):
+def mulRoots(fx, x0, numMax):
 
     output = {
         "type": 1,
@@ -15,18 +13,20 @@ def mulRoots(x0, numMax):
     i = 0
     cond = 0.0000001
     error = 1.0000000
+ ex = sympify(fx)
 
-    print("Ingrese el polinomio de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
-    fx = input("Aqui : ")
-    ex = sympify(fx)
+ d_ex = diff(ex, x)
+ d2_ex = diff(d_ex, x)
+ 
+ y = x0
+ ex_2 = 0
+ ex_3 = 0
+ d_ex2 = 0
+ d2_ex2 = 0 
 
     d_ex = diff(ex, x)
     d2_ex = diff(d_ex, x)
 
-    y = x0
-    ex_2 = ex
-    d_ex2 = ex
-    d2_ex2 = ex
 
     while error > cond and i < numMax:
         if i == 0:
@@ -44,26 +44,19 @@ def mulRoots(x0, numMax):
             y = y2 - ((ex_2 * d_ex2) / Pow(d_ex2, 2) - (ex_2*d2_ex2))
 
             ex_2 = ex_2.subs(x0, y)
-            ex_2 = ex_2.evalf()
             error = Abs(y - x0)
-            er = sympify(error)
+            ex_2 = ex_2.evalf()
             er.evalf()
+            er = sympify(error)
             error = er
             ex = ex_2
             x0 = y
             results.append(i , y, ex_2, error)
+
         i += 1
-
     output["results"] = results
-
-    print("i : " + str(i))
-    print("xi : " + str(y))
-    print("f(xi) : " + str(ex))
-    print("error : " + str(error))
     return output
-
-
-def newton(x0, numMax):
+def newton(fx, x0, numMax):
 
     output = {
         "type": 1,
@@ -99,8 +92,8 @@ def newton(x0, numMax):
 
             ex_2 = ex.subs(x0, y)
             ex_2 = ex.evalf()
-
             d_ex2 = d_ex2.subs(x0, y)
+
             d_ex2 = d_ex2.evalf(x0, y)
 
             error = Abs(y - x0)
@@ -113,19 +106,12 @@ def newton(x0, numMax):
             results.append(i , y, ex_2, error)
 
 
+
         i += 1
-
-
     output["results"] = results
-
-    print("i : " + str(i))
-    print("xi : " + str(y))
-    print("f(xi) : " + str(ex))
-    print("error : " + str(error))
     return output
 
-
-def puntoFijo(x0, numMax):
+def puntoFijo(fx, gx, x0, numMax):
 
     output = {
         "type": 1,
@@ -137,10 +123,12 @@ def puntoFijo(x0, numMax):
     i = 0
     cond = 0.0000001
     error = 1.0000000
+ ex = sympify(fx)
+ 
+ y = x0
+ ex_2 = 0
 
-    print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
-    fx = input("Aqui : ")
-    ex = sympify(fx)
+ rx = sympify(gx)
 
     y = x0
     ex_2 = 0
@@ -169,26 +157,19 @@ def puntoFijo(x0, numMax):
 
             rx_2 = rx.subs(x, y)
             rx_2 = rx_2.evalf()
-
             error = Abs(y - x0)
+
             er = sympify(error)
             error = er.evalf()
 
             x0 = y
 
             results.append([i, x0, ex_2])
-            print("i : " + str(i))
-            print("xi : " + str(y))
-            print("f(xi) : " + str(ex_2))
-            print("g(xi) : " + str(rx_2))
-            print("error : " + str(error))
         i += 1
 
     output["resultado"] = results
     return output
-
-
-def busIncrem(x0, d, numMax):
+def busIncrem(fx, xo, d, numMax):
 
     output = {
         "type": 1,
@@ -197,6 +178,7 @@ def busIncrem(x0, d, numMax):
     results = list()
     x = Symbol('x')
     i = 0
+ ex = sympify(fx)
 
     print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
     fx = input("Aqui : ")
@@ -228,8 +210,7 @@ def busIncrem(x0, d, numMax):
     output["results"] = results
     return output
 
-
-def bisec(a, b, numMax):
+def bisec(a, b, fx, numMax):
 
     output = {
         "type": 1,
@@ -241,6 +222,7 @@ def bisec(a, b, numMax):
     i = 1
     cond = 0.0000001
     error = 1.0000000
+ ex = sympify(fx)
 
     print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
     fx = input("Aqui : ")
@@ -292,16 +274,9 @@ def bisec(a, b, numMax):
 
     output["results"] = results
 
-    print("i : " + str(i))
-    print("a : " + str(a))
-    print("xm : " + str(xm))
-    print("b : " + str(b))
-    print("f(xm) : " + str(ex_3))
-    print("error : " + str(error))
     return output
 
-
-def reglaFalsa(a, b, numMax):
+def reglaFalsa(a, b, fx, numMax):
 
     output = {
         "type": 1,
@@ -313,6 +288,7 @@ def reglaFalsa(a, b, numMax):
     i = 1
     cond = 0.0000001
     error = 1.0000000
+ ex = sympify(fx)
 
     print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
     fx = input("Aqui : ")
@@ -368,16 +344,8 @@ def reglaFalsa(a, b, numMax):
 
     output["results"] = results
     
-    print("i : " + str(i))
-    print("a : " + str(a))
-    print("xm : " + str(xm))
-    print("b : " + str(b))
-    print("f(xm) : " + str(ex_3))
-    print("error : " + str(error))
     return output
-
-
-def secan(x0, x1, numMax):
+def secan(x0, x1, fx, numMax):
 
     output = {
         "type": 1,
@@ -389,6 +357,7 @@ def secan(x0, x1, numMax):
     i = 0
     cond = 0.0000001
     error = 1.0000000
+ ex = sympify(fx)
 
     print("Ingrese el polinomio de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
     fx = input("Aqui : ")
