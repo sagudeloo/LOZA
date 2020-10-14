@@ -13,16 +13,16 @@ def mulRoots(fx, x0, numMax):
     i = 0
     cond = 0.0000001
     error = 1.0000000
- ex = sympify(fx)
-
- d_ex = diff(ex, x)
- d2_ex = diff(d_ex, x)
+    ex = sympify(fx)
  
- y = x0
- ex_2 = 0
- ex_3 = 0
- d_ex2 = 0
- d2_ex2 = 0 
+    d_ex = diff(ex, x)
+    d2_ex = diff(d_ex, x)
+ 
+    y = x0
+    ex_2 = 0
+    ex_3 = 0
+    d_ex2 = 0
+    d2_ex2 = 0 
 
     d_ex = diff(ex, x)
     d2_ex = diff(d_ex, x)
@@ -37,7 +37,7 @@ def mulRoots(fx, x0, numMax):
             d_ex2 = d_ex.subs(x, x0)
             d_ex2 = d_ex2.evalf()
 
-            d2_ex2 = d2_ex2.subs(x, x0)
+            d2_ex2 = d2_ex.subs(x, x0)
             d2_ex2 = d2_ex2.evalf()
 
             y2 = sympify(y)
@@ -46,8 +46,8 @@ def mulRoots(fx, x0, numMax):
             ex_2 = ex_2.subs(x0, y)
             error = Abs(y - x0)
             ex_2 = ex_2.evalf()
-            er.evalf()
             er = sympify(error)
+            er.evalf()
             error = er
             ex = ex_2
             x0 = y
@@ -121,12 +121,12 @@ def puntoFijo(fx, gx, x0, numMax):
     i = 0
     cond = 0.0000001
     error = 1.0000000
- ex = sympify(fx)
- 
- y = x0
- ex_2 = 0
+    ex = sympify(fx)
+    
+    y = x0
+    ex_2 = 0
 
- rx = sympify(gx)
+    rx = sympify(gx)
 
     y = x0
     ex_2 = 0
@@ -165,7 +165,7 @@ def puntoFijo(fx, gx, x0, numMax):
 
     output["resultado"] = results
     return output
-def busIncrem(fx, xo, d, numMax):
+def busIncrem(fx, x0, d, numMax):
 
     output = {
         "type": 1,
@@ -174,8 +174,7 @@ def busIncrem(fx, xo, d, numMax):
     results = list()
     x = Symbol('x')
     i = 0
- ex = sympify(fx)
-
+    
     ex = sympify(fx)
 
     y = x0
@@ -195,7 +194,7 @@ def busIncrem(fx, xo, d, numMax):
             ex_2 = ex_2.evalf()
 
             if (ex_2*ex_3 < 0):
-                results.append([a, b])
+                results.append([x0, y])
 
         i += 1
     output["results"] = results
@@ -213,7 +212,6 @@ def bisec(a, b, fx, numMax):
     i = 1
     cond = 0.0000001
     error = 1.0000000
- ex = sympify(fx)
 
     ex = sympify(fx)
 
@@ -277,7 +275,6 @@ def reglaFalsa(a, b, fx, numMax):
     i = 1
     cond = 0.0000001
     error = 1.0000000
- ex = sympify(fx)
 
     ex = sympify(fx)
 
@@ -344,7 +341,6 @@ def secan(x0, x1, fx, numMax):
     i = 0
     cond = 0.0000001
     error = 1.0000000
- ex = sympify(fx)
 
     ex = sympify(fx)
 
