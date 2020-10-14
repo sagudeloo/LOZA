@@ -3,6 +3,7 @@ math = require("./node_modules/mathjs/dist/math.js");
 class methods {
 
     static busquedasIncrementales(fx,x0,delta,maxNum){
+        console.log("Busquedas Incrementales");
         let x=x0;
         let i=0;
         let f = 0.1;
@@ -20,9 +21,7 @@ class methods {
                 f = f(x); 
             }
             if (f*f0 < 0 ){
-                console.log("Hay una raiz de f en i: " + i);
-                console.log("a: " + x0);
-                console.log("b: " + x);
+                console.log("Hay una raiz de f en [" + x0+","+x+"]");
             }
             i = i+1;
         }
@@ -30,6 +29,8 @@ class methods {
     }
 
     static biseccion(fx,a,b,maxNum){
+        console.log("Biseccion");
+        
         let cond = 0.0000001;
         let i = 1;
         let xm = 0;
@@ -39,8 +40,11 @@ class methods {
         let check = 0;
         let error = 1;
 
+        console.log("| i  |     a         |    xm         |      b        |        f(x)          |    E    |");
+
         while(error > cond && i < maxNum){
             //Primera iteracion
+            
             if(i == 1){
                 xm = (a+b)/2;
                 fa = math.evaluate(fx);
@@ -67,17 +71,14 @@ class methods {
             }else{
                 check = 1;
             }
-            console.log("i: " + i);
-            console.log("a: " + a);
-            console.log("xm: " + xm);
-            console.log("b: " + b);
-            console.log("f(xm): " + fm);
-            console.log("E: " + error);
+            console.log("|  "+ i +" | "+a.toFixed(10)+"  | "+xm.toFixed(10)+"  | "+b.toFixed(10)+"  | "+fm+"  |    "+error+"    |");
             i = i+1;
         }
     }
 
     static reglaFalsa(fx,a,b,maxNum){
+        console.log("Regla Falsa");
+
         let cond = 0.0000001;
         let i = 1;
         let error = 1;
@@ -87,6 +88,8 @@ class methods {
         let fa = 0;
         let fb = 0;
         let fm = 0;
+
+        console.log("| i  |     a         |    xm         |     b         |            f(x)         |    E    |");
 
         while(error > cond && i < maxNum){
             if (i == 1){
@@ -107,17 +110,14 @@ class methods {
                 xm = (fb*a-fa*b)/(fb-fa);
                 error = math.abs(xm-xm0);
             }
-            console.log("i: " + i);
-            console.log("a: " + a);
-            console.log("xm: " + xm);
-            console.log("b: " + b);
-            console.log("f(xm): " + fm);
-            console.log("E: " + error);
+            console.log("|  "+ i +" | "+a.toFixed(10)+"  | "+xm.toFixed(10)+"  | "+b.toFixed(10)+"  | "+fm+"  |    "+error+"    |");
             i = i+1;
         }
     }
 
     static puntoFijo(fx,gx,x0,maxNum){
+        console.log("Punto Fijo");
+
         let cond = 0.0000001;
         let error = 1;
         let i = 0;
@@ -125,12 +125,15 @@ class methods {
         let f = 0;
         let g = 0;
 
+        console.log("| i  |          xi          |       g(xi)          |         f(xi)       |                E              |");
+
         while(error > cond && i < maxNum){
             if(i == 0){
                 f = math.evaluate(fx);
                 f = f(x);
                 g = math.evaluate(gx);
                 g = g(x);
+                console.log("|  "+ i +" | "+x.toFixed(16)+"  | "+g+"  | "+f+"  |    "+error.toFixed(16)+"         |    ");
             }else{
                 x = g;
                 f = math.evaluate(fx);
@@ -139,81 +142,87 @@ class methods {
                 g = g(x);
                 error = math.abs(x-x0);
                 x0 = x;
-                
+                console.log("|  "+ i +" | "+x+"  | "+g+"  | "+f+"  |    "+error+"         |    ");
             }
-            console.log("i: " + i);
-            console.log("xi: " + x);
-            console.log("g(xi): " + g);
-            console.log("f(xi): " + f);
-            console.log("E: " + error);
+            
             i = i+1;
         }
     }
 
     static newton (x0,fx,dx,maxNum){
+        console.log("Newton");
+
         let error = 1;
         let i = 0;
         let cond = 0.0000001;
         let f = 0;
         let fdx = 0;
-        let xcont = x0;
+        let x = x0;
+
+        console.log("| iter |         xi          |          f(x)        |          E          |");
+
         while(error > cond && i < maxNum){
             if (i == 0){
                 f = math.evaluate(fx);
                 f = f(x0);
                 fdx = math.evaluate(dx);
                 fdx = fdx(x0);
-                
+                console.log("|  "+ i +"   | "+x.toFixed(16)+"  | "+f+"  | "+error.toFixed(16)+"  |");
             }else{
-                xcont = x0-(f/fdx);
+                x = x0-(f/fdx);
                 f = math.evaluate(fx);
-                f = f(xcont);
+                f = f(x);
                 fdx = math.evaluate(dx);
-                fdx = fdx(xcont);
-                error=math.abs(xcont-x0);
-                x0 = xcont;
+                fdx = fdx(x);
+                error=math.abs(x-x0);
+                x0 = x;
+                console.log("|  "+ i +"   | "+x+"  | "+f+"  | "+error+"  |");
             }
-            console.log("i: " + i);
-            console.log("x: " + xcont);
-            console.log("f: " + f);
-            console.log("error: " + error);
+            
             i = i+1;
         }
     }
 
     static secante (x0,x1,fx,maxNum){
+        console.log("Secante");
+
         let error = 1;
         let i = 0;
         let cond = 0.0000001;
         let f0 = 0;
         let f1 = 0;
-        let xcont = x0;
+        let x = x0;
+
+        console.log("| iter |         xi          |          f(x)       |          E          |");
+
         while(error > cond && i < maxNum){
             if (i == 0 ){
                 f0 = math.evaluate(fx);
                 f0 = f0(x0);
+                console.log("|  "+ i +"   | "+x.toFixed(16)+"  | "+f1.toFixed(16)+"  | "+error.toFixed(16)+"  |");
             }else if(i == 1){
                 f1 = math.evaluate(fx);
                 f1 = f1(x1);
+                console.log("|  "+ i +"   | "+x1.toFixed(16)+"  | "+f1+"  | "+error.toFixed(16)+"  |");
             }else{
-                xcont = x1;
+                x = x1;
                 x1 = x1-f1*(x1-x0)/(f1-f0);
-                x0 = xcont;
+                x0 = x;
                 f0 = f1;
                 f1 = math.evaluate(fx);
                 f1 = f1(x1);
                 error=math.abs(x1-x0);
+                console.log("|  "+ i +"   | "+x1+"  | "+f1+"  | "+error+"  |");
             }
-            console.log("i: " + i);
-            console.log("x: " + x1);
-            console.log("f: " + f1);
-            console.log("error: " + error);
+            
             i = i+1;
             
         }
     }
     
     static raicesMultiples(fx, fdx, f2dx, x0, maxNum){
+        console.log("Raices Multiples");
+        
         let cond = 0.0000001;
         let x = x0;
         let i = 0;
@@ -223,10 +232,13 @@ class methods {
         let f2d = 0;
         let fac = 0;
 
+        console.log("| i  |          xi           |         f(x)        |          E          |");
+
         while(error > cond && i < maxNum){
             if(i == 0){
                 f = math.evaluate(fx);
                 f = f(x0);
+                console.log("|  "+ i +" | "+x.toFixed(18)+"  | "+f+"  | "+error.toFixed(16)+"  |");
             }else{
                 fd = math.evaluate(fdx);
                 fd = fd(x0);
@@ -238,20 +250,26 @@ class methods {
                 error = math.abs(x-x0);
                 f = fac;
                 x0 = x;
+                console.log("|  "+ i +" | "+x+"  | "+f+"  | "+error+"  |");
             }
-            console.log("i: " + i);
-            console.log("xi: " + x);
-            console.log("f(xi): " + f);
-            console.log("error: " + error);
+            
             i = i+1;
         }
     }
+
 }
 
-//methods.busquedasIncrementales('f(x) = log(sin(x)^2+1)-(1/2)',-3,0.5,100);
-//methods.biseccion('f(x) = log(sin(x)^2+1)-(1/2)',0,1,100);
-//methods.reglaFalsa('f(x) = log(sin(x)^2+1)-(1/2)',0,1,100);
-//methods.puntoFijo('f(x) = log(sin(x)^2+1)-(1/2)-x','f(x) = log(sin(x)^2+1)-(1/2)',-0.5,100);
-//methods.newton(0.5,'f(x) = log(sin(x)^2+1)-(1/2)', 'f(x) = 2*(sin(x)^2+1)^-1*sin(x)*cos(x)',100);
-//methods.secante(0.5,1,'f(x) = log(sin(x)^2+1)-(1/2)',100);
+//Busquedas Incrementales 
+methods.busquedasIncrementales('f(x) = log(sin(x)^2+1)-(1/2)',-3,0.5,100);
+//Biseccion
+methods.biseccion('f(x) = log(sin(x)^2+1)-(1/2)',0,1,100);
+//Regla Falsa
+methods.reglaFalsa('f(x) = log(sin(x)^2+1)-(1/2)',0,1,100);
+//Punto Fijo
+methods.puntoFijo('f(x) = log(sin(x)^2+1)-(1/2)-x','f(x) = log(sin(x)^2+1)-(1/2)',-0.5,100);
+//Newton
+methods.newton(0.5,'f(x) = log(sin(x)^2+1)-(1/2)', 'f(x) = 2*(sin(x)^2+1)^-1*sin(x)*cos(x)',100);
+//Secante
+methods.secante(0.5,1,'f(x) = log(sin(x)^2+1)-(1/2)',100);
+//Raices Multiples
 methods.raicesMultiples('f(x) = exp(x)-x-1','f(x) = exp(x)-1','f(x) = exp(x)',1,6);
