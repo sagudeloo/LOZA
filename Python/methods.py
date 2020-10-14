@@ -69,8 +69,6 @@ def newton(fx, x0, numMax):
     cond = 0.0000001
     error = 1.0000000
 
-    print("Ingrese el polinomio de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
-    fx = input("Aqui : ")
     ex = sympify(fx)
 
     d_ex = diff(ex, x)
@@ -133,8 +131,6 @@ def puntoFijo(fx, gx, x0, numMax):
     y = x0
     ex_2 = 0
 
-    print("Ingrese el polinomio g(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
-    gx = input("Aqui : ")
     rx = sympify(gx)
 
     rx_2 = 0
@@ -180,8 +176,6 @@ def busIncrem(fx, xo, d, numMax):
     i = 0
  ex = sympify(fx)
 
-    print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
-    fx = input("Aqui : ")
     ex = sympify(fx)
 
     y = x0
@@ -202,9 +196,6 @@ def busIncrem(fx, xo, d, numMax):
 
             if (ex_2*ex_3 < 0):
                 results.append([a, b])
-                print("Hay una raiz de f en i: " + str(i))
-                print("a : " + str(ex_3))
-                print("b : " + str(ex_2))
 
         i += 1
     output["results"] = results
@@ -224,8 +215,6 @@ def bisec(a, b, fx, numMax):
     error = 1.0000000
  ex = sympify(fx)
 
-    print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
-    fx = input("Aqui : ")
     ex = sympify(fx)
 
     xm = 0
@@ -290,8 +279,6 @@ def reglaFalsa(a, b, fx, numMax):
     error = 1.0000000
  ex = sympify(fx)
 
-    print("Ingrese el polinomio f(x) de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
-    fx = input("Aqui : ")
     ex = sympify(fx)
 
     xm = 0
@@ -359,8 +346,6 @@ def secan(x0, x1, fx, numMax):
     error = 1.0000000
  ex = sympify(fx)
 
-    print("Ingrese el polinomio de la siguiente forma --> potencia: **, raíz: //, ejemplo: x**2; x//2.\nPara números decimales use el punto en lugar de la coma.")
-    fx = input("Aqui : ")
     ex = sympify(fx)
 
     y = x0
@@ -394,10 +379,6 @@ def secan(x0, x1, fx, numMax):
         i += 1
 
     output["results"] = results
-    print("i : " + str(i))
-    print("x : " + str(x1))
-    print("f : " + str(ex_1))
-    print("error : " + str(error))
     return output
 
 
