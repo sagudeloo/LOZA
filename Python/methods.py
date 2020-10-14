@@ -3,6 +3,12 @@ import numpy.matlib
 
 
 def gaussSimple(Ma, b):
+
+    output = {
+        "type": 2
+        "method": "Simple Gaussian Reduction",
+        }
+
     # Getting matrix dimention
     n = len(Ma)
 
@@ -10,16 +16,29 @@ def gaussSimple(Ma, b):
     matrixMa = np.matrix(Ma)
     vectorB = np.array(b)
     M = np.column_stack((matrixMa,vectorB))
+    
+    steps = {'Step 0': np.copy(M)}
 
     # Matrix reduction
     for i in range(n-1):
         for j in range(i+1,n):
             if (M[j,i] != 0):
                 M[j,i:n+1]=M[j,i:n+1]-(M[j,i]/M[i,i])*M[i,i:n+1]
+        steps[f'Step {i+1}'] = np.copy(M)
+    
+    output["results"] = steps
 
-    return backSubst(M)
+    output["x"] = backSubst(M)
+
+    return output
 
 def gaussPartialPivot(Ma, b):
+
+    output = {
+        "type": 2
+        "method": "Gaussian Reduction With Partial Pivoting",
+        }
+
     #Getting matrix dimention
     n = len(Ma)
 
@@ -27,6 +46,8 @@ def gaussPartialPivot(Ma, b):
     matrixMa = np.matrix(Ma)
     vectorB = np.array(b)
     M = np.column_stack((matrixMa,vectorB))
+
+    steps = {'Step 0': np.copy(M)}
 
     # Matrix reduction
     for i in range(n-1):
@@ -45,10 +66,21 @@ def gaussPartialPivot(Ma, b):
         for j in range(i+1,n):
             if (M[j,i] != 0):
                 M[j,i:n+1]=M[j,i:n+1]-(M[j,i]/M[i,i])*M[i,i:n+1]
-    # Back substitut
-    return backSubst(M)
+        steps[f'Step {i+1}'] = np.copy(M)
+    
+    output["results"] = steps
+
+    output["x"] = backSubst(M)
+
+    return output
 
 def gaussTotalPivot(Ma, b):
+
+    output = {
+        "type": 2
+        "method": "Gaussian Reduction With Total Pivoting",
+        }
+
     #Getting matrix dimention
     n = len(Ma)
 
@@ -58,6 +90,8 @@ def gaussTotalPivot(Ma, b):
     M = np.column_stack((matrixMa,vectorB))
     changes = np.array([])
     
+    steps = {'Step 0': np.copy(M)}
+
     # Matrix reduction
     for i in range(n-1):
         # Column swaping
@@ -91,8 +125,10 @@ def gaussTotalPivot(Ma, b):
         for j in range(i+1,n):
             if (M[j,i] != 0):
                 M[j,i:n+1]=M[j,i:n+1]-(M[j,i]/M[i,i])*M[i,i:n+1]
+        steps[f'Step {i+1}'] = np.copy(M)
     
-    print(changes)
+    output["results"] = steps
+
     # Back substitution
     x = backSubst(M)
 
@@ -102,7 +138,9 @@ def gaussTotalPivot(Ma, b):
         x[i[0]] = x[i[1]]
         x[i[1]] = aux
     
-    return x
+    output["x"] = x
+
+    return output
 
 def backSubst(M):
     # Getting  matrix dimention
@@ -115,3 +153,56 @@ def backSubst(M):
         aux2 = np.hstack((M[i,n], np.asarray(-M[i,i+1:n]).reshape(-1)))
         x[i] = np.dot(aux1,aux2)/M[i,i]
     return x
+
+def outputToString(output):
+    if(output["type"]):
+        return outputIncrementalSearch(output)
+    elif (output["type"]):
+        return outputanalyticalMethod(output)
+    else:
+        return outputGauss(output)
+
+def outputIncrementalSearch(output):
+    stringOutput = f'\n{output["method"]}\n'
+    stringOutput = "\nResults:\n"
+    results = output["results"]
+    for i in results:
+        stringOutput += f'There is a root of f in {i}\n'
+    stringOutput += "\n______________________________________________________________\n"
+
+def outputanalyticalMethod(output):
+    stringOutput = f'\n{output["method"]}\n'
+    stringOutput = "\nResults table:\n"
+    columns = output["columns"]
+    for i in columns:
+        stringOutput += '|{:15}'.format(i)
+    stringOutput += "|\n"
+    results = output["results"]
+    for j in results:
+        for k in j:
+            stringOutput += '|{:15E}'.format(k)
+        stringOutput += "|\n"
+    if ("root" in output):
+        stringOutput = f'\nAn approximation of the root was fund in: {output["root"]}\n'
+    else:
+        stringOutput = f'\nAn approximation of the root was not found in {output["iterations"]}\n'
+    stringOutput += "\n______________________________________________________________\n"
+
+def outputGauss(output):
+    stringOutput = f'\n{output["method"]}'
+    stringOutput += "\nResults:\n"
+    results = output["results"]
+    for i,j in results.items():
+        stringOutput += f'\n{i}\n\n'
+        for k in j:
+            for m in k:
+                stringOutput += '{:15E}'.format(m.item())
+            stringOutput += "\n"
+    stringOutput += "\nAfter Back Sustitution\n"
+    stringOutput += "\nx:\n"
+    for i in output["x"]:
+        stringOutput += '{:15E}\n'.format(i.item())
+
+    stringOutput += "\n______________________________________________________________\n"
+
+    return stringOutput
