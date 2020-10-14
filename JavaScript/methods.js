@@ -40,7 +40,7 @@ class methods {
         let check = 0;
         let error = 1;
 
-        console.log("| i  |     a         |    xm         |      b        |        f(x)          |    E    |");
+        console.log("| i  |     a         |    xm         |      b        |     f(x)   |    E    |");
 
         while(error > cond && i < maxNum){
             //Primera iteracion
@@ -71,7 +71,7 @@ class methods {
             }else{
                 check = 1;
             }
-            console.log("|  "+ i +" | "+a.toFixed(10)+"  | "+xm.toFixed(10)+"  | "+b.toFixed(10)+"  | "+fm+"  |    "+error+"    |");
+            console.log("|  "+ i +" | "+a.toFixed(10)+"  | "+xm.toFixed(10)+"  | "+b.toFixed(10)+"  | "+fm.toPrecision(6)+"  | "+error+"  |");
             i = i+1;
         }
     }
@@ -89,7 +89,7 @@ class methods {
         let fb = 0;
         let fm = 0;
 
-        console.log("| i  |     a         |    xm         |     b         |            f(x)         |    E    |");
+        console.log("| i  |     a         |    xm         |     b         |      f(x)    |    E    |");
 
         while(error > cond && i < maxNum){
             if (i == 1){
@@ -108,9 +108,10 @@ class methods {
                 fa = f(a);
                 fb = f(b);
                 xm = (fb*a-fa*b)/(fb-fa);
+                fm = f(xm);
                 error = math.abs(xm-xm0);
             }
-            console.log("|  "+ i +" | "+a.toFixed(10)+"  | "+xm.toFixed(10)+"  | "+b.toFixed(10)+"  | "+fm+"  |    "+error+"    |");
+            console.log("|  "+ i +" | "+a.toFixed(10)+"  | "+xm.toFixed(10)+"  | "+b.toFixed(10)+"  | "+fm.toPrecision(6)+"  | "+error+"  |");
             i = i+1;
         }
     }
@@ -125,7 +126,7 @@ class methods {
         let f = 0;
         let g = 0;
 
-        console.log("| i  |          xi          |       g(xi)          |         f(xi)       |                E              |");
+        console.log("| i  |          xi          |       g(xi)          |    f(xi)  |     E   |");
 
         while(error > cond && i < maxNum){
             if(i == 0){
@@ -133,7 +134,7 @@ class methods {
                 f = f(x);
                 g = math.evaluate(gx);
                 g = g(x);
-                console.log("|  "+ i +" | "+x.toFixed(16)+"  | "+g+"  | "+f+"  |    "+error.toFixed(16)+"         |    ");
+                console.log("|  "+ i +" | "+x.toFixed(16)+"  | "+g+"  | "+f.toPrecision(6)+"  | "+error.toPrecision(6)+" |    ");
             }else{
                 x = g;
                 f = math.evaluate(fx);
@@ -142,7 +143,7 @@ class methods {
                 g = g(x);
                 error = math.abs(x-x0);
                 x0 = x;
-                console.log("|  "+ i +" | "+x+"  | "+g+"  | "+f+"  |    "+error+"         |    ");
+                console.log("|  "+ i +" | "+x+"  | "+g+"  | "+f.toPrecision(6)+"  | "+error.toPrecision(6)+"  |    ");
             }
             
             i = i+1;
