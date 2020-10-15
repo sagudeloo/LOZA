@@ -1,12 +1,14 @@
 import numpy as np
 import numpy.matlib
 from sympy import *
+
 def mulRoots(fx, x0, numMax):
 
     output = {
         "type": 1,
         "method": "Multi Roots",
-        "columns": ["iter","xi","f(xi)","E" ]
+        "columns": ["iter","xi","f(xi)","E" ],
+        "iterations": numMax
     }
     results = list()
     x = Symbol('x')
@@ -55,13 +57,16 @@ def mulRoots(fx, x0, numMax):
 
         i += 1
     output["results"] = results
+    output["root"] = y
     return output
+
 def newton(fx, x0, numMax):
 
     output = {
         "type": 1,
         "method": "Newton",
-        "columns": ["iter","xi","f(xi)","E" ]
+        "columns": ["iter","xi","f(xi)","E" ],
+        "iterations": numMax
     }
     results = list()
     x = Symbol('x')
@@ -107,6 +112,7 @@ def newton(fx, x0, numMax):
 
         i += 1
     output["results"] = results
+    output["root"] = y
     return output
 
 def puntoFijo(fx, gx, x0, numMax):
@@ -114,7 +120,8 @@ def puntoFijo(fx, gx, x0, numMax):
     output = {
         "type": 1,
         "method": "Fixed point",
-        "columns": ["iter","xi","f(xi)","E" ]
+        "columns": ["iter","xi","f(xi)","E" ],
+        "iterations": numMax
     }
     results = list()
     x = Symbol('x')
@@ -164,7 +171,9 @@ def puntoFijo(fx, gx, x0, numMax):
         i += 1
 
     output["resultado"] = results
+    output["root"] = y
     return output
+
 def busIncrem(fx, x0, d, numMax):
 
     output = {
@@ -205,7 +214,8 @@ def bisec(a, b, fx, numMax):
     output = {
         "type": 1,
         "method": "Bisection",
-        "columns": ["iter","a","xm", "b","f(xm)","E" ]
+        "columns": ["iter","a","xm", "b","f(xm)","E" ],
+        "iterations": numMax
     }
     results = list()
     x = Symbol('x')
@@ -231,7 +241,7 @@ def bisec(a, b, fx, numMax):
 
             ex_2 = ex.subs(x, a)
             ex_2 = ex_2.evalf()
-            results = [i, a, xm, b, ex_3]
+            results.append([i, a, xm, b, ex_3])
         else:
 
             if (w < 0):
@@ -256,11 +266,11 @@ def bisec(a, b, fx, numMax):
                 w = -1
             else:
                 w = 1
-            results = [i, a, xm, b, ex_3, error]
+            results.append([i, a, xm, b, ex_3, error])
         i += 1
 
     output["results"] = results
-
+    output["root"] = xm
     return output
 
 def reglaFalsa(a, b, fx, numMax):
@@ -268,7 +278,8 @@ def reglaFalsa(a, b, fx, numMax):
     output = {
         "type": 1,
         "method": "Regula falsi",
-        "columns": ["iter","a","xm", "b","f(xm)","E" ]
+        "columns": ["iter","a","xm", "b","f(xm)","E" ],
+        "iterations": numMax
     }
     results = list()
     x = Symbol('x')
@@ -298,7 +309,7 @@ def reglaFalsa(a, b, fx, numMax):
             xm = (ex_b*a - ex_a*b)/(ex_b-ex_a)
             ex_3 = ex.subs(x, xm)
             ex_3 = ex_3.evalf()
-            results = [i, a, xm, b, ex_3]
+            results.append([i, a, xm, b, ex_3])
         else:
 
             if (ex_a*ex_3 < 0):
@@ -323,18 +334,20 @@ def reglaFalsa(a, b, fx, numMax):
             error = Abs(xm-xm0)
             er = sympify(error)
             error = er.evalf()
-            results = [i, a, xm, b, ex_3, error]
+            results.append([i, a, xm, b, ex_3, error])
         i += 1
 
     output["results"] = results
-    
+    output["root"] = xm
     return output
+
 def secan(x0, x1, fx, numMax):
 
     output = {
         "type": 1,
         "method": "Secant",
-        "columns": ["iter", "xi", "f(xi)","E" ]
+        "columns": ["iter", "xi", "f(xi)","E" ],
+        "iterations": numMax
     }
     results = list()
     x = Symbol('x')
@@ -352,11 +365,11 @@ def secan(x0, x1, fx, numMax):
         if i == 0:
             ex_0 = ex.subs(x, x0)
             ex_0 = ex_0.evalf()
-            results = [i, x0, ex_0]
+            results.append([i, x0, ex_0])
         elif i == 1:
             ex_1 = ex.subs(x, x1)
             ex_1 = ex_1.evalf()
-            results = [i, x1, ex_1]
+            results.append([i, x1, ex_1])
         else:
             y = x1
             x1 = x1 - (ex_1*(x1 - x0)/(ex_1 - ex_0))
@@ -371,10 +384,11 @@ def secan(x0, x1, fx, numMax):
             error = Abs(x1 - x0)
             er = sympify(error)
             error = er.evalf()
-            results = [i, x1, ex_1, error]
+            results.append([i, x1, ex_1, error])
         i += 1
 
     output["results"] = results
+    output["root"] = y
     return output
 
 
@@ -539,7 +553,7 @@ def outputToString(output):
     if(output["type"]==0):
         return outputIncrementalSearch(output)
     elif (output["type"]==1):
-        return outputanalyticalMethod(output)
+        return outputAnalyticalMethod(output)
     else:
         return outputGauss(output)
 
@@ -554,23 +568,22 @@ def outputIncrementalSearch(output):
     return stringOutput
 
 
-def outputanalyticalMethod(output):
+def outputAnalyticalMethod(output):
     stringOutput = f'\n{output["method"]}\n'
     stringOutput = "\nResults table:\n"
     columns = output["columns"]
     for i in columns:
-        stringOutput += '|{:15}'.format(i)
+        stringOutput += '|{:^25}'.format(i)
     stringOutput += "|\n"
     results = output["results"]
-    print(results)
     for j in results:
         for k in j:
-            stringOutput += '|{:15E}'.format(k)
+            stringOutput += '|{:^25E}'.format(k)
         stringOutput += "|\n"
     if ("root" in output):
-        stringOutput = f'\nAn approximation of the root was fund in: {output["root"]}\n'
+        stringOutput += f'\nAn approximation of the root was fund in: {output["root"]}\n'
     else:
-        stringOutput = f'\nAn approximation of the root was not found in {output["iterations"]}\n'
+        stringOutput += f'\nAn approximation of the root was not found in {output["iterations"]}\n'
     stringOutput += "\n______________________________________________________________\n"
     return stringOutput
 
@@ -583,12 +596,12 @@ def outputGauss(output):
         stringOutput += f'\n{i}\n\n'
         for k in j:
             for m in k:
-                stringOutput += '{:15E}'.format(m.item())
+                stringOutput += '{:^25E}'.format(m.item())
             stringOutput += "\n"
     stringOutput += "\nAfter Back Sustitution\n"
     stringOutput += "\nx:\n"
     for i in output["x"]:
-        stringOutput += '{:15E}\n'.format(i.item())
+        stringOutput += '{:^25E}\n'.format(i.item())
 
     stringOutput += "\n______________________________________________________________\n"
 

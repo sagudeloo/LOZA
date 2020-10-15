@@ -1,22 +1,25 @@
 import methods
 
-def main(fx):
-    x = input("Ingrese el número de desea utilizar: \n Raíces múltiples:1 \n Método de newton:2 \n Método de punto fijo:3 \n Búsquedas incrementales:4 \n Bisección:5 \n Regla falsa:6 \n Secante:7 \n ")
-    if (x=="1"):
+def main():
+    x = int(input("Ingrese el número de desea utilizar: \n Raíces múltiples:1 \n Método de newton:2 \n Método de punto fijo:3 \n Búsquedas incrementales:4 \n Bisección:5 \n Regla falsa:6 \n Secante:7 \n "))
+    if (x==1):
+        fx = input("Ingrese la funcion f(x) ")
         x0=input("Ingrese el valor inicial de x")
         x0 = float(x0)
         numMax=input("Ingrese el número máximo de iteraciones")
         numMax = int(numMax)
         output = methods.mulRoots(fx,x0,numMax)
         print(methods.outputToString(output))
-    elif x=="2":
+    elif x==2:
+        fx = input("Ingrese la funcion f(x) ")
         x0=input("Ingrese el valor inicial de x")
         x0 = float(x0)
         numMax=input("Ingrese el número máximo de iteraciones")
         numMax = int(numMax)
         output = methods.newton(fx, x0, numMax)
         print(methods.outputToString(output))
-    elif x=="3":
+    elif x==3:
+        fx = input("Ingrese la funcion f(x) ")
         x0=input("Ingrese el valor inicial de x")
         x0 = float(x0)
         numMax=input("Ingrese el número máximo de iteraciones")
@@ -24,7 +27,8 @@ def main(fx):
         gx = input("Ingrese la función g(x)")
         output = methods.puntoFijo(fx, gx, x0, numMax)
         print(methods.outputToString(output))
-    elif x=="4":
+    elif x==4:
+        fx = input("Ingrese la funcion f(x) ")
         x0=input("Ingrese el valor inicial de x")
         x0 = float(x0)
         numMax=input("Ingrese el número máximo de iteraciones")
@@ -33,7 +37,8 @@ def main(fx):
         d = float(d)
         output = methods.busIncrem(fx, x0, d,numMax)
         print(methods.outputToString(output))
-    elif x=="5":
+    elif x==5:
+        fx = input("Ingrese la funcion f(x) ")
         a = input("Ingrese el valor a")
         a = float(a)
         b = input("Ingrese el valor b")
@@ -42,7 +47,8 @@ def main(fx):
         numMax = int(numMax)
         output = methods.bisec(a, b, fx, numMax)
         print(methods.outputToString(output))              
-    elif x=="6":
+    elif x==6:
+        fx = input("Ingrese la funcion f(x) ")
         a = input("Ingrese el valor a")
         a = float(a)
         b = input("Ingrese el valor b")
@@ -51,7 +57,8 @@ def main(fx):
         numMax = int(numMax)
         output = methods.reglaFalsa(a,b,fx,numMax)
         print(methods.outputToString(output))
-    elif x=="7":
+    elif x==7:
+        fx = input("Ingrese la funcion f(x) ")
         x0 = input("Ingrese el valor inicial de la serie")
         x0 = float(x0)
         x1 = input("Ingrese el valor número uno de la serie")
@@ -63,4 +70,5 @@ def main(fx):
     else:
         print("Método inexistente o número mal digitado.")
 
-main("log(sin(x)**2+1)-(1/2)")
+if __name__ == "__main__":
+    main()
