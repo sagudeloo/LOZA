@@ -25,7 +25,7 @@ def main():
         numMax=input("Enter the max. number of iterations ")
         numMax = int(numMax)
         gx = input("Enter the function g(x) ")
-        output = methods.puntoFijo(fx, gx, x0, numMax)
+        output = methods.fixedPoint(fx, gx, x0, numMax)
         print(methods.outputToString(output))
     elif x==4:
         fx = input("Enter the function f(x) ")
@@ -35,7 +35,7 @@ def main():
         numMax = int(numMax)
         d = input("Enter the delta value ")
         d = float(d)
-        output = methods.busIncrem(fx, x0, d,numMax)
+        output = methods.incremSearch(fx, x0, d,numMax)
         print(methods.outputToString(output))
     elif x==5:
         fx = input("Enter the function f(x) ")
@@ -55,7 +55,7 @@ def main():
         b = float(b)
         numMax=input("Enter the max. number of iterations ")
         numMax = int(numMax)
-        output = methods.reglaFalsa(a,b,fx,numMax)
+        output = methods.regulaFalsi(a,b,fx,numMax)
         print(methods.outputToString(output))
     elif x==7:
         fx = input("Enter the function f(x) ")

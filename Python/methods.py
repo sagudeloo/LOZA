@@ -16,15 +16,15 @@ def mulRoots(fx, x0, numMax):
     cond = 0.0000001
     error = 1.0000000
     ex = sympify(fx)
- 
+
     d_ex = diff(ex, x)
     d2_ex = diff(d_ex, x)
- 
+
     y = x0
     ex_2 = 0
     ex_3 = 0
     d_ex2 = 0
-    d2_ex2 = 0 
+    d2_ex2 = 0
 
     d_ex = diff(ex, x)
     d2_ex = diff(d_ex, x)
@@ -115,7 +115,7 @@ def newton(fx, x0, numMax):
     output["root"] = y
     return output
 
-def puntoFijo(fx, gx, x0, numMax):
+def fixedPoint(fx, gx, x0, numMax):
 
     output = {
         "type": 1,
@@ -129,7 +129,7 @@ def puntoFijo(fx, gx, x0, numMax):
     cond = 0.0000001
     error = 1.0000000
     ex = sympify(fx)
-    
+
     y = x0
     ex_2 = 0
 
@@ -174,7 +174,7 @@ def puntoFijo(fx, gx, x0, numMax):
     output["root"] = y
     return output
 
-def busIncrem(fx, x0, d, numMax):
+def incremSearch(fx, x0, d, numMax):
 
     output = {
         "type": 0,
@@ -183,7 +183,7 @@ def busIncrem(fx, x0, d, numMax):
     results = list()
     x = Symbol('x')
     i = 0
-    
+
     ex = sympify(fx)
 
     y = x0
@@ -273,7 +273,7 @@ def bisec(a, b, fx, numMax):
     output["root"] = xm
     return output
 
-def reglaFalsa(a, b, fx, numMax):
+def regulaFalsi(a, b, fx, numMax):
 
     output = {
         "type": 1,
