@@ -632,6 +632,27 @@ def LUPartialPivot(Ma, b):
 
     return (x,L,U,P)
 
+def crout(Ma, b):
+    # Initialization
+    A = np.array(Ma)
+    n = A.shape[0]
+    L = np.eye(n)
+    U = np.eye(n)
+    # Factorization
+    for i in range(n-1):
+        for j in range(i, n):
+            L[j,i]=A[j,i]-np.dot(L[j,0:i], U[0:i,i].T);
+        for j in range(i+1, n):
+            U[i,j]=(A[i,j]-np.dot(L[i,0:i], U[0:i,j].T))/L[i,i]
+        print("L", L)
+        print("U", U)
+    L[n-1,n-1]=A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T)
+
+    z=forSubst(np.column_stack((L,b)))
+    x=backSubst(np.column_stack((U, z)))
+
+    return (x,L,U)
+
 def outputToString(output):
     if(output["type"]==0):
         return outputIncrementalSearch(output)
