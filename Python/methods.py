@@ -1,5 +1,7 @@
 import numpy as np
 import numpy.matlib
+from numpy.lib import scimath
+import cmath
 from sympy import *
 
 def mulRoots(fx, x0, numMax):
@@ -442,7 +444,7 @@ def gaussPartialPivot(Ma, b):
 
     # Matrix reduction
     for i in range(n-1):
-        # Row swaping
+        # Row swapping
         maxV = float('-inf')    # Max value in the column
         maxI = None             # Index of the max value
         for j in range(i+1, n):
@@ -538,9 +540,9 @@ def gaussTotalPivot(Ma, b):
 
 def backSubst(M):
     # Getting  matrix dimention
-    n = len(M)
+    n = M.shape[0]
     # Initializing a zero vector
-    x = np.matlib.zeros((n, 1))
+    x = np.matlib.zeros((n, 1), dtype=complex)
     x[n-1] = M[n-1, n]/M[n-1, n-1]
     for i in range(n-2, -1, -1):
         aux1 = np.hstack((1, np.asarray(x[i+1:n]).reshape(-1)))
@@ -548,14 +550,232 @@ def backSubst(M):
         x[i] = np.dot(aux1, aux2)/M[i, i]
     return x
 
+def forSubst(M):
+    # Getting  matrix dimention
+    n = M.shape[0]
+    # Initializing a zero vector
+    x = np.matlib.zeros((n, 1), dtype=complex)
+    x[0] = M[0, n]/M[0, 0]
+    for i in range(1, n, 1):
+        aux1 = np.hstack((1, np.asarray(x[0:i]).reshape(-1)))
+        aux2 = np.hstack((M[i, n], np.asarray(-M[i, 0:i]).reshape(-1)))
+        x[i] = np.dot(aux1, aux2)/M[i, i]
+    return x
+
+def LUSimple(Ma, b):
+
+    output = {
+        "type": 3,
+        "method": "LU With Gaussian Simple"
+    }
+
+    # Initialization
+    matrixMa = np.array(Ma)
+    vectorB = np.array(b).T
+    n = matrixMa.shape[0]
+    L = np.eye(n)
+    U = np.zeros((n,n))
+    M = matrixMa
+    steps = {'Step 0': [np.copy(M)]}
+    
+    # Factorization
+    for i in range(n-1):
+        for j in range(i+1, n):
+            if not (M[j,i] == 0):
+                L[j,i]=M[j,i]/M[i,i]
+                M[j,i:n]=M[j,i:n]-(M[j,i]/M[i,i])*M[i,i:n]
+        U[i, i:n]=M[i,i:n]
+        U[i+1,i+1:n]=M[i+1,i+1:n]
+        steps[f"Step {i+1}"] = [np.copy(M),{"L:":np.copy(L)},{"U:":np.copy(U)}]
+    U[n-1,n-1]=M[n-1,n-1]
+    
+    output["results"] = steps
+
+    # Resoults delivery
+    z=forSubst(np.column_stack((L,b)))
+    x=backSubst(np.column_stack((U,z)))
+
+    output["x"] = x
+
+    return output
+
+def LUPartialPivot(Ma, b):
+
+    output = {
+        "type": 3,
+        "method": "LU With Partial Pivot"
+    }
+
+    # Initialization
+    matrixMa = np.array(Ma)
+    vectorB = np.array(b).T
+    n = matrixMa.shape[0]
+    L = np.eye(n)
+    U = np.zeros((n,n))
+    P = np.eye(n)
+    M = matrixMa
+
+    steps = {'Step 0': [np.copy(M)]}
+
+    # Factorization
+    for i in range(0,n-1):
+        # row swapping
+        maxV = float('-inf')    # Max value in the column
+        maxI = None             # Index of the max value
+        for j in range(i+1, n):
+            if(maxV < abs(M[j, i])):
+                maxV = M[j, i]
+                maxI = j
+        if (maxV > abs(M[i, i])):
+            aux2=np.copy(M[maxI,i:n])
+            aux3=np.copy(P[maxI,:])
+            M[maxI,i:n]=M[i,i:n]
+            P[maxI,:]=P[i,:]
+            M[i,i:n]=aux2
+            P[i,:]=aux3
+            if i>0:
+                aux4=L[maxI, 0:i-1]
+                L[maxI, 0:i-1]=L[i,0:i-1]
+                L[i,0:i-1]=aux4
+        for j in range(i+1, n):
+            if not (M[j,i] == 0):
+                L[j,i]=M[j,i]/M[i,i]
+                M[j,i:n]=M[j,i:n]-(M[j,i]/M[i,i])*M[i,i:n]
+        U[i, i:n]=M[i,i:n]
+        U[i+1,i+1:n]=M[i+1,i+1:n]
+        steps[f"Step {i+1}"] = [np.copy(M),{"L:":np.copy(L)},{"U:":np.copy(U)},{"P:":np.copy(P)}]
+
+    U[n-1,n-1]=M[n-1,n-1]
+
+    output["results"] = steps
+    
+    # Resoults delivery
+    z=forSubst(np.column_stack((L,P@vectorB)))
+    x=backSubst(np.column_stack((U,z)))
+
+    output["x"] = x
+
+    return output
+
+def crout(Ma, b):
+
+    output = {
+        "type": 3,
+        "method": "Crout"
+    }
+
+    # Initialization
+    A = np.array(Ma)
+    n = A.shape[0]
+    L = np.eye(n)
+    U = np.eye(n)
+
+    steps = {'Step 0': [np.copy(A)]}
+
+    # Factorization
+    for i in range(n-1):
+        for j in range(i, n):
+            L[j,i]=A[j,i]-np.dot(L[j,0:i], U[0:i,i].T);
+        for j in range(i+1, n):
+            U[i,j]=(A[i,j]-np.dot(L[i,0:i], U[0:i,j].T))/L[i,i]
+        steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
+    L[n-1,n-1]=A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T)
+
+    output["results"] = steps
+
+    z=forSubst(np.column_stack((L,b)))
+    x=backSubst(np.column_stack((U, z)))
+
+    output["x"] = x
+
+    return output
+
+def doolittle(Ma, b):
+
+    output = {
+        "type": 3,
+        "method": "Doolittle"
+    }
+
+    # Initialization
+    A = np.array(Ma)
+    n = A.shape[0]
+    L = np.eye(n)
+    U = np.eye(n)
+
+    steps = {'Step 0': [np.copy(A)]}
+
+    # Factorization
+    for i in range(n-1):
+        for j in range(i, n):
+            U[i,j]=A[i,j]-np.dot(L[i,0:i], U[0:i,j].T)
+        for j in range(i+1, n):
+            L[j,i]=(A[j,i]-np.dot(L[j,0:i], U[0:i,i].T))/U[i,i]
+        steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
+        
+    U[n-1,n-1]=A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T)
+
+    output["results"] = steps
+
+    z=forSubst(np.column_stack((L,b)))
+    x=backSubst(np.column_stack((U, z)))
+
+    output["x"] = x
+
+    return output
+
+def cholesky(Ma, b):
+
+    output = {
+        "type": 3,
+        "method": "Cholesky"
+    }
+
+    # Initialization
+    A = np.array(Ma)
+    n = A.shape[0]
+    L = np.eye(n, dtype=complex)
+    U = np.eye(n, dtype=complex)
+
+    steps = {'Step 0': [np.copy(A)]}
+
+    # Factorization
+    for i in range(n-1):
+        L[i,i]= scimath.sqrt(A[i,i]-np.dot(L[i,0:i], U[0:i,i].T))
+        U[i,i]=L[i,i]
+        for j in range(i+1, n):
+            L[j,i]=(A[j,i]-np.dot(L[j,0:i], U[0:i,i].T))/U[i,i];
+        for j in range(i+1, n):
+            U[i,j]=(A[i,j]-np.dot(L[i,0:i], U[0:i,j].T))/L[i,i]
+        steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
+    L[n-1,n-1]=scimath.sqrt(A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T))
+    U[n-1,n-1]=L[n-1,n-1]
+
+    output["results"] = steps
+
+    z=forSubst(np.column_stack((L,b)))
+    x=backSubst(np.column_stack((U, z)))
+
+    output["x"] = x
+
+    return output
 
 def outputToString(output):
-    if(output["type"]==0):
+    type = output["type"]
+    if(type==0):
         return outputIncrementalSearch(output)
-    elif (output["type"]==1):
+    elif (type==1):
         return outputAnalyticalMethod(output)
-    else:
+    elif (type==2):
         return outputGauss(output)
+    elif (type==3):
+        return outputLU(output)
+    elif (type==4):
+        pass
+    elif (type==5):
+        pass
+    elif (type==6):
+        pass
 
 
 def outputIncrementalSearch(output):
@@ -598,10 +818,47 @@ def outputGauss(output):
             for m in k:
                 stringOutput += '{:^25E}'.format(m.item())
             stringOutput += "\n"
-    stringOutput += "\nAfter Back Sustitution\n"
+    stringOutput += "\nAfter Backward Sustitution\n"
     stringOutput += "\nx:\n"
     for i in output["x"]:
         stringOutput += '{:^25E}\n'.format(i.item())
+
+    stringOutput += "\n______________________________________________________________\n"
+
+    return stringOutput
+
+def outputLU(output):
+    stringOutput = f'\n{output["method"]}\n'
+    stringOutput += "\nResults:\n"
+    results = output["results"]
+    for i,j in results.items():
+        stringOutput += f'\n{i}\n\n'
+        for k in j:
+            if(isinstance(k,numpy.ndarray)):
+                for l in k:
+                    for m in l:
+                        real = f'{(m.item()).real:.6f}' if not (m.item()).real == 0 else ""
+                        imag = f'{(m.item()).imag:+.6f}j' if not (m.item()).imag == 0 else ""
+                        num = real+imag if real or imag else f'{0:.6f}'
+                        stringOutput+= f'{num:^15}'
+                    stringOutput += "\n"
+            else:
+                for l,m in k.items():
+                    stringOutput += f'\n{l}\n'
+                    for n in m:
+                        for o in n:
+                            real = f'{(o.item()).real:.6f}' if not (o.item()).real == 0 else ""
+                            imag = f'{(o.item()).imag:+.6f}j' if not (o.item()).imag == 0 else ""
+                            num = real+imag if real or imag else f'{0:.6f}'
+                            stringOutput+= f'{num:^15}'
+                        stringOutput += "\n"
+    stringOutput += "\nAfter Backward And Forward Sustitution\n"
+    stringOutput += "\nx:\n"
+    for i in output["x"]:
+        real = f'{(i.item()).real:.6f}' if not (i.item()).real == 0 else ""
+        imag = f'{(i.item()).imag:+.6f}j' if not (i.item()).imag == 0 else ""
+        num = real+imag if real or imag else f'{0:.6f}'
+        stringOutput += f'{num:^15}\n'
 
     stringOutput += "\n______________________________________________________________\n"
 
