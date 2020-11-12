@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.matlib
+from numpy.lib import scimath
 from sympy import *
 
 def mulRoots(fx, x0, numMax):
@@ -552,7 +553,7 @@ def forSubst(M):
     # Getting  matrix dimention
     n = M.shape[0]
     # Initializing a zero vector
-    x = np.matlib.zeros((n, 1))
+    x = np.matlib.zeros((n, 1), dtype=complex)
     x[0] = M[0, n]/M[0, 0]
     for i in range(1, n, 1):
         aux1 = np.hstack((1, np.asarray(x[0:i]).reshape(-1)))
@@ -664,6 +665,28 @@ def doolittle(Ma, b):
         for j in range(i+1, n):
             L[j,i]=(A[j,i]-np.dot(L[j,0:i], U[0:i,i].T))/U[i,i]
     U[n-1,n-1]=A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T)
+
+    z=forSubst(np.column_stack((L,b)))
+    x=backSubst(np.column_stack((U, z)))
+
+    return (x,L,U)
+
+def cholesky(Ma, b):
+    # Initialization
+    A = np.array(Ma)
+    n = A.shape[0]
+    L = np.eye(n, dtype=complex)
+    U = np.eye(n, dtype=complex)
+    # Factorization
+    for i in range(n-1):
+        L[i,i]= scimath.sqrt(A[i,i]-np.dot(L[i,0:i], U[0:i,i].T))
+        U[i,i]=L[i,i]
+        for j in range(i+1, n):
+            L[j,i]=(A[j,i]-np.dot(L[j,0:i], U[0:i,i].T))/U[i,i];
+        for j in range(i+1, n):
+            U[i,j]=(A[i,j]-np.dot(L[i,0:i], U[0:i,j].T))/L[i,i]
+    L[n-1,n-1]=scimath.sqrt(A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T))
+    U[n-1,n-1]=L[n-1,n-1]
 
     z=forSubst(np.column_stack((L,b)))
     x=backSubst(np.column_stack((U, z)))
