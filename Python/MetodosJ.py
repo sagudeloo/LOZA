@@ -3,6 +3,10 @@ import numpy.matlib
 from scipy import linalg
 
 def Lagrange(X,Y):
+    output = {
+        "type": 4,
+        "method": "Lagrange"
+    }
     n = X.size
     L = np.zeros((n,n))
     val0=0
@@ -17,13 +21,16 @@ def Lagrange(X,Y):
             j = j+1
         L[i,:] = val/np.polyval(val,X[i])
         i += 1
-    print(L)
-    #Mostrar Datos
-    i = 0
+    output ["results"] = L
+    output ["x"] = Y
     Coef = Y.dot(L)
-    print(Coef)
+    return output
 
 def Trazlin(X,Y):
+    output = {
+        "type": 5,
+        "method": "Tracers"
+    }
     n = X.size
     m = 2*(n-1)
     A = np.zeros((m,m))
@@ -51,15 +58,15 @@ def Trazlin(X,Y):
     while i < X.size-1:
         Coef[i,:] = [Saux[2*i],Saux[2*i+1]]
         i = i+1
-    print(Coef)
 
-    #Mostrar trazadores
-    i = 0
-    while i < X.size-1:
-        print(Coef[i,0],"x+",Coef[i,1])
-        i = i+1
+    output["results"] = Coef
+    return output
 
 def TrazlinCuadratico(X,Y):
+    output = {
+        "type": 5,
+        "method": "Tracers"
+    }
     n = X.size
     m = 3*(n-1)
     A = np.zeros((m,m))
@@ -98,17 +105,15 @@ def TrazlinCuadratico(X,Y):
         Coef[i,:] = np.hstack((Saux[j],Saux[j+1],Saux[j+2]))
         i = i+1
         j = j + 3
-    print("Coeficientes de los trazadores: ")
-    print(Coef)
 
-    #Mostrar trazadores
-    i = 0
-    print("Trazadores: ")
-    while i < X.size-1:
-        print(Coef[i,0],"x^2+",Coef[i,1],"x+",Coef[i,2])
-        i = i+1
+    output["results"] = Coef
+    return output
 
 def TrazlinCubicos(X,Y):
+    output = {
+        "type": 5,
+        "method": "Tracers"
+    }
     n = X.size
     m = 4*(n-1)
     A = np.zeros((m,m))
@@ -151,8 +156,6 @@ def TrazlinCubicos(X,Y):
     b[m-1]=0;
     
     Saux = linalg.solve(A,b)
-    print(A)
-    print(b)
     #Mostrar Coeficientes
     i = 0
     j = 0
@@ -160,20 +163,70 @@ def TrazlinCubicos(X,Y):
         Coef[i,:] = np.hstack((Saux[j],Saux[j+1],Saux[j+2],Saux[j+3]))
         i = i+1
         j = j + 4
-    print("Coeficientes de los trazadores: ")
-    print(Coef)
 
-    #Mostrar trazadores
+    output["results"] = Coef
+    return output
+
+def outputLarange(output):
+    stringOutput = f'\n{output["method"]}\n'
+    stringOutput += "\nResults:\n"
+    stringOutput += "\nLagrange interpolating polynomials:\n\n"
+    rel = output["results"]
     i = 0
-    print("Trazadores: ")
-    while i < X.size-1:
-        print(Coef[i,0],"x^3+",Coef[i,1],"x^2+",Coef[i,2],"x+",Coef[i,3])
-        i = i+1
+    while i < len(rel) :
+        stringOutput += '{:^6f}'.format(rel[i,0]) + "x^3"
+        stringOutput += format(rel[i,1],"+.6f") + "x^2"
+        stringOutput += format(rel[i,2],"+.6f") + "x"
+        stringOutput += format(rel[i,3],"+.6f") +"   //L" + str(i) + "\n"
+        i += 1
+
+    stringOutput += "\n Polynomial:\n"
+    j = 0
+    for i in output["x"]:
+        stringOutput += str(i) +'*L+' + str(j)
+        j += 1
+    stringOutput += "\n______________________________________________________________\n"
+    return stringOutput
+
+def outputTracers(output):
+    stringOutput = f'\n{output["method"]}\n'
+    stringOutput += "\nResults:\n"
+    stringOutput += "\nTracer coefficients:\n\n"
+    rel = output["results"]
+    i = 0
+    aux = rel.shape
+    while i < aux[0] :
+        j = 0
+        while j < aux[1]:
+            stringOutput += '{:^6f}'.format(rel[i,j]) +"  "
+            j += 1
+        i += 1
+        stringOutput += "\n"
+    stringOutput += "\n Tracers:\n"
+    i = 0
+    while i < aux[0] :
+        j = 0
+        if aux[1] == 2:
+            stringOutput += format(rel[i,0],"6f") +"x"
+            stringOutput += format(rel[i,1],"+.6f") 
+        elif aux[1] == 3:
+            stringOutput += format(rel[i,0],"6f") +"x^2"
+            stringOutput += format(rel[i,1],"+.6f") +"x"
+            stringOutput += format(rel[i,2],"+.6f")
+        elif aux[1] == 4:
+            stringOutput += format(rel[i,0],"6f") +"x^3"
+            stringOutput += format(rel[i,1],"+.6f") +"x^2"
+            stringOutput += format(rel[i,2],"+.6f") +"x"
+            stringOutput += format(rel[i,3],"+.6f")
+
+        i += 1
+        stringOutput += "\n"
+    stringOutput += "\n______________________________________________________________\n"
+
+    return stringOutput
 
 
 X = np.array([-1, 0, 3, 4])
 Y = np.array([15.5, 3, 8, 1])
-#Lagrange(X,Y)
-#Trazlin(X,Y)
-#TrazlinCuadratico(X,Y)
-TrazlinCubicos(X,Y)
+output = Trazlin(X,Y)
+print(outputTracers(output))
