@@ -587,6 +587,51 @@ def LUSimple(Ma, b):
 
     return (x,L,U)
 
+def LUPartialPivot(Ma, b):
+
+    # Initialization
+    matrixMa = np.array(Ma)
+    vectorB = np.array(b).T
+    n = matrixMa.shape[0]
+    L = np.eye(n)
+    U = np.zeros((n,n))
+    P = np.eye(n)
+    M = matrixMa
+    # Factorization
+    for i in range(0,n-1):
+        # row swapping
+        maxV = float('-inf')    # Max value in the column
+        maxI = None             # Index of the max value
+        for j in range(i+1, n):
+            if(maxV < abs(M[j, i])):
+                maxV = M[j, i]
+                maxI = j
+        if (maxV > abs(M[i, i])):
+            aux2=np.copy(M[maxI,i:n])
+            aux3=np.copy(P[maxI,:])
+            M[maxI,i:n]=M[i,i:n]
+            P[maxI,:]=P[i,:]
+            M[i,i:n]=aux2
+            P[i,:]=aux3
+            if i>0:
+                aux4=L[maxI, 0:i-1]
+                L[maxI, 0:i-1]=L[i,0:i-1]
+                L[i,0:i-1]=aux4
+        for j in range(i+1, n):
+            if not (M[j,i] == 0):
+                L[j,i]=M[j,i]/M[i,i]
+                M[j,i:n]=M[j,i:n]-(M[j,i]/M[i,i])*M[i,i:n]
+        U[i, i:n]=M[i,i:n]
+        U[i+1,i+1:n]=M[i+1,i+1:n]
+
+    U[n-1,n-1]=M[n-1,n-1]
+    
+    # Resoults delivery
+    z=forSubst(np.column_stack((L,P@vectorB)))
+    x=backSubst(np.column_stack((U,z)))
+
+    return (x,L,U,P)
+
 def outputToString(output):
     if(output["type"]==0):
         return outputIncrementalSearch(output)
