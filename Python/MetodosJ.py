@@ -4,7 +4,7 @@ from scipy import linalg
 
 def Lagrange(X,Y):
     output = {
-        "type": 4,
+        "type": 5,
         "method": "Lagrange"
     }
     n = X.size
@@ -62,9 +62,9 @@ def Trazlin(X,Y):
     output["results"] = Coef
     return output
 
-def TrazlinCuadratico(X,Y):
+def TrazlinQuadratic(X,Y):
     output = {
-        "type": 5,
+        "type": 6,
         "method": "Tracers"
     }
     n = X.size
