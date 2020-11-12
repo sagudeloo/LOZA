@@ -442,7 +442,7 @@ def gaussPartialPivot(Ma, b):
 
     # Matrix reduction
     for i in range(n-1):
-        # Row swaping
+        # Row swapping
         maxV = float('-inf')    # Max value in the column
         maxI = None             # Index of the max value
         for j in range(i+1, n):
@@ -538,7 +538,7 @@ def gaussTotalPivot(Ma, b):
 
 def backSubst(M):
     # Getting  matrix dimention
-    n = len(M)
+    n = M.shape[0]
     # Initializing a zero vector
     x = np.matlib.zeros((n, 1))
     x[n-1] = M[n-1, n]/M[n-1, n-1]
@@ -548,6 +548,17 @@ def backSubst(M):
         x[i] = np.dot(aux1, aux2)/M[i, i]
     return x
 
+def forSubst(M):
+    # Getting  matrix dimention
+    n = M.shape[0]
+    # Initializing a zero vector
+    x = np.matlib.zeros((n, 1))
+    x[0] = M[0, n]/M[0, 0]
+    for i in range(1, n, 1):
+        aux1 = np.hstack((1, np.asarray(x[0:i]).reshape(-1)))
+        aux2 = np.hstack((M[i, n], np.asarray(-M[i, 0:i]).reshape(-1)))
+        x[i] = np.dot(aux1, aux2)/M[i, i]
+    return x
 
 def outputToString(output):
     if(output["type"]==0):
