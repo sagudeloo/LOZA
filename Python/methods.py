@@ -3,6 +3,7 @@ import numpy.matlib
 from numpy.lib import scimath
 import cmath
 from sympy import *
+from scipy import linalg
 
 def mulRoots(fx, x0, numMax):
 
