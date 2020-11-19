@@ -24,7 +24,6 @@ def mulRoots(fx, x0, numMax):
 
     y = x0
     ex_2 = 0
-    ex_3 = 0
     d_ex2 = 0
     d2_ex2 = 0
 
@@ -537,10 +536,145 @@ def gaussTotalPivot(Ma, b):
 
     return output
 
+def jacobiM(Ma, Vb, x0, tol, numMax):
+    sX = x0.size
+    xA = np.zeros((sX,1))
+    
+    A = np.matrix(Ma)
+    
+    b = np.array(Vb)
+    s = b.size
+    b = np.reshape(b,(s,1))
+
+    D = np.diag(np.diag(A))
+    L = -1*np.tril(A)+D
+    U = -1*np.triu(A)+D
+    LU = L+U
+    
+    T = np.linalg.inv(D) @ LU
+    C = np.linalg.inv(D) @ b
+    
+    xP = x0
+    E = 1000
+    cont = 0
+
+    while(E > tol and cont < numMax  ):
+         xA = T@xP + C
+         E = np.linalg.norm(xP - xA)
+         xP = xA
+         cont = cont + 1
+
+    x = xA
+    nIter = cont
+    error = E
+    
+    print(f"x =  {x}  \n\nIteración n = {nIter} \nError = {error}  \n\nT = {T} \n\n C = {C}")
+
+def gaussSei(Ma, Vb, x0, tol, numMax):
+    sX = x0.size
+    xA = np.zeros((sX,1))
+    
+    A = np.matrix(Ma)
+    
+    b = np.array(Vb)
+    s = b.size
+    b = np.reshape(b,(s,1))
+
+    D = np.diag(np.diag(A))
+    L = -1*np.tril(A)+D
+    U = -1*np.triu(A)+D
+    
+    T = np.linalg.inv(D-L) @ U
+    C = np.linalg.inv(D-L) @ b
+    
+    xP = x0
+    E = 1000
+    cont = 0
+
+    while(E > tol and cont < numMax  ):
+         xA = T@xP + C
+         E = np.linalg.norm(xP - xA)
+         xP = xA
+         cont = cont + 1
+
+    x = xA
+    nIter = cont
+    error = E
+    
+    print(f"x =  {x}  \n\nIteración n = {nIter} \nError = {error}  \n\nT = {T} \n\n C = {C}")
+
+def sorM(Ma, Vb, x0, w, tol, numMax):
+    sX = x0.size
+    xA = np.zeros((sX,1))
+    
+    A = np.matrix(Ma)
+    
+    b = np.array(Vb)
+    s = b.size
+    b = np.reshape(b,(s,1))
+
+    D = np.diag(np.diag(A))
+    L = -1*np.tril(A)+D
+    U = -1*np.triu(A)+D
+    
+    T = np.linalg.inv(D-(w*L)) @ (((1-w)*D)+(w*U))
+    C = (w*np.linalg.inv(D-(w*L))) @ b
+    
+    xP = x0
+    E = 1000
+    cont = 0
+
+    while(E > tol and cont < numMax  ):
+         xA = T@xP + C
+         E = np.linalg.norm(xP - xA)
+         xP = xA
+         cont = cont + 1
+
+    x = xA
+    nIter = cont
+    error = E
+    
+    print(f"x =  {x}  \n\nIteración n = {nIter} \nError = {error}  \n\nT = {T} \n\n C = {C}")
+
+def vanderMon(Vx,Vy):
+    X = np.array(Vx)
+    s1 = X.size
+
+    Y = np.array(Vy)
+
+    A = np.zeros((s1,s1))
+
+    i = 0
+    for i in range(i,s1):
+        A[:,i]=X**(s1-i-1)
+    
+    Coef = (np.linalg.solve(A,Y)).conj().transpose()
+    
+    print(f"\nA :{A} \nCoef :{Coef}")
+
+def difdividas(Vx,Vy):
+    X = np.array(Vx)
+    n = X.size
+
+    Y = np.array(Vy)
+
+    D = np.zeros((n,n))
+
+    D[:,0]=Y.T
+    for i in range(1,n):
+        aux0 = D[i-1:n,i-1]
+        aux = np.diff(aux0)
+        aux2 = X[i:n] - X[0:n-i]
+        D[i:n,i] = aux/aux2.T
+
+    Coef = np.diag(D)
+    
+    
+    print(f"\nD :{D} \nCoef :{Coef}")
 
 def backSubst(M):
-    # Getting  matrix dimention
     n = M.shape[0]
+    # Getting  matrix dimention
     # Initializing a zero vector
     x = np.matlib.zeros((n, 1), dtype=complex)
     x[n-1] = M[n-1, n]/M[n-1, n-1]
