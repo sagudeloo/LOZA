@@ -1,4 +1,5 @@
 import methods
+import numpy as np
 
 A = [
     [4,-1,0,3],
