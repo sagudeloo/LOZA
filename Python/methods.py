@@ -537,6 +537,12 @@ def gaussTotalPivot(Ma, b):
     return output
 
 def jacobiM(Ma, Vb, x0, tol, numMax):
+    output = {
+        "type": 4,
+        "method": "Jacobi's Method",
+        "iterations": numMax
+    }
+    
     sX = x0.size
     xA = np.zeros((sX,1))
     
@@ -558,19 +564,31 @@ def jacobiM(Ma, Vb, x0, tol, numMax):
     E = 1000
     cont = 0
 
+    steps = {'Step 0': np.copy(xA)}
     while(E > tol and cont < numMax  ):
          xA = T@xP + C
          E = np.linalg.norm(xP - xA)
          xP = xA
          cont = cont + 1
-
+         steps[f'Step {cont+1}'] = np.copy(xA)
+    
     x = xA
     nIter = cont
     error = E
     
-    print(f"x =  {x}  \n\nIteración n = {nIter} \nError = {error}  \n\nT = {T} \n\n C = {C}")
+    output["results"] = steps 
+    output["E"] = error
+    output["Iteration"] = nIter
+    
+    return output
 
 def gaussSei(Ma, Vb, x0, tol, numMax):
+    output = {
+        "type": 4,
+        "method": "Gauss-Seidel's Method",
+        "iterations": numMax
+    }
+    
     sX = x0.size
     xA = np.zeros((sX,1))
     
@@ -591,19 +609,32 @@ def gaussSei(Ma, Vb, x0, tol, numMax):
     E = 1000
     cont = 0
 
+    steps = {'Step 0': np.copy(xA)}
     while(E > tol and cont < numMax  ):
          xA = T@xP + C
          E = np.linalg.norm(xP - xA)
          xP = xA
          cont = cont + 1
+         steps[f'Step {cont+1}'] = np.copy(xA)
+         
 
     x = xA
     nIter = cont
     error = E
     
-    print(f"x =  {x}  \n\nIteración n = {nIter} \nError = {error}  \n\nT = {T} \n\n C = {C}")
+    output["results"] = steps
+    output["E"] = error
+    output["Iteration"] = nIter
+
+    return output
 
 def sorM(Ma, Vb, x0, w, tol, numMax):
+    output = {
+        "type": 4,
+        "method": "SOR(Relaxation) Method",
+        "iterations": numMax
+    }
+    
     sX = x0.size
     xA = np.zeros((sX,1))
     
@@ -624,19 +655,29 @@ def sorM(Ma, Vb, x0, w, tol, numMax):
     E = 1000
     cont = 0
 
+    steps = {'Step 0': np.copy(xA)}
     while(E > tol and cont < numMax  ):
          xA = T@xP + C
          E = np.linalg.norm(xP - xA)
          xP = xA
          cont = cont + 1
+         steps[f'Step {cont+1}'] = np.copy(xA)
 
     x = xA
     nIter = cont
     error = E
     
-    print(f"x =  {x}  \n\nIteración n = {nIter} \nError = {error}  \n\nT = {T} \n\n C = {C}")
+    output["results"] = steps
+    output["E"] = error
+    output["Iteration"] = nIter
+    
+    return output
 
 def vanderMon(Vx,Vy):
+    output = {
+        "type": 5,
+        "method": "Vandermonde's Method",
+    }
     X = np.array(Vx)
     s1 = X.size
 
@@ -650,9 +691,17 @@ def vanderMon(Vx,Vy):
     
     Coef = (np.linalg.solve(A,Y)).conj().transpose()
     
-    print(f"\nA :{A} \nCoef :{Coef}")
+    output["A"] = A
+    output["Coef"] = Coef
+    
+    return output
 
-def difdividas(Vx,Vy):
+def difdivid(Vx,Vy):
+    output = {
+        "type": 5,
+        "method": "Newton's Method"
+    }
+
     X = np.array(Vx)
     n = X.size
 
@@ -665,12 +714,15 @@ def difdividas(Vx,Vy):
         aux0 = D[i-1:n,i-1]
         aux = np.diff(aux0)
         aux2 = X[i:n] - X[0:n-i]
-        D[i:n,i] = aux/aux2.T
+        D[i:n,i] = aux/aux2.T  
 
     Coef = np.diag(D)
     
     
-    print(f"\nD :{D} \nCoef :{Coef}")
+    output["D"] = D
+    output["Coef"] = Coef
+    
+    return output
 
 def backSubst(M):
     n = M.shape[0]
@@ -997,3 +1049,74 @@ def outputLU(output):
     stringOutput += "\n______________________________________________________________\n"
 
     return stringOutput
+
+def outputTypeJ(output):
+    stringOutput = f'\n{output["method"]}\n'
+    stringOutput += "\nResults table:\n"
+    
+    columns = output["results"]
+    for i in columns:
+        stringOutput += '|{:^25E}'.format(i)
+        stringOutput += "|\n"
+    
+    iters = output["Iteration"]
+    for j in iters:
+        stringOutput += '|{:^25E}'.format(j)
+        stringOutput += "|\n"
+    
+    errors = output["E"]
+    for k in errors:
+        stringOutput += '|{:^25E}'.format(k)
+        stringOutput += "|\n"
+    
+    stringOutput += "\n______________________________________________________________\n"
+    return stringOutput
+
+def outputNewton(output):
+    stringOutput = f'\n{output["method"]}\n'
+    stringOutput += "\nResults:\n"
+    stringOutput += "\nDivided differences table:\n\n"
+    rel = output["D"]
+    stringOutput += '{:^7f}'.format(rel[0,0]) +"   //L \n"
+
+    stringOutput += "\nNewton's polynomials coefficents:\n\n"
+    rel = output["Coef"]
+    stringOutput += '{:^7f}'.format(rel[0,0]) +"   //L \n"
+    
+    stringOutput += "\nNewton interpolating polynomials:\n\n"
+    rel = output["Coef"]
+    i = 0
+    while i < len(rel) :
+        stringOutput += '{:^7f}'.format(rel[i,0]) +"   //L \n"
+        stringOutput += format(rel[i,1],"+.6f") + "x+1"
+        stringOutput += format(rel[i,2],"+.6f") + "(x+1)x" 
+        stringOutput += format(rel[i,3],"+.6f") + "(x+1)x(x-3)"
+        i += 1
+
+    stringOutput += "\n______________________________________________________________\n"
+    return stringOutput
+
+def outputVandermonde(output):
+    stringOutput = f'\n{output["method"]}\n'
+    stringOutput += "\nResults:\n"
+    stringOutput += "\nVandermonde's matrix:\n\n"
+    rel = output["D"]
+    stringOutput += '{:^7f}'.format(rel[0,0]) +"   //L \n"
+
+    stringOutput += "\nVandermonde's polynomials coefficents:\n\n"
+    rel = output["Coef"]
+    stringOutput += '{:^7f}'.format(rel[0,0]) +"   //L \n"
+    
+    stringOutput += "\nVandermonde's interpolating polynomials:\n\n"
+    rel = output["Coef"]
+    i = 0
+    while i < len(rel) :
+        stringOutput += '{:^7f}'.format(rel[i,0]) +"   //L \n"
+        stringOutput += format(rel[i,1],"+.6f") + "x+1"
+        stringOutput += format(rel[i,2],"+.6f") + "(x+1)x" 
+        stringOutput += format(rel[i,3],"+.6f") + "(x+1)x(x-3)"
+        i += 1
+
+    stringOutput += "\n______________________________________________________________\n"
+    return stringOutput
+
