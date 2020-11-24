@@ -1226,20 +1226,25 @@ def outputTypeJ(output):
     stringOutput += "\nResults table:\n"
     
     columns = output["results"]
+    i = 0
     for i in columns:
         stringOutput += '|{:^25E}'.format(i)
         stringOutput += "|\n"
+        i += 1
     
     iters = output["Iteration"]
+    j = 0
     for j in iters:
         stringOutput += '|{:^25E}'.format(j)
         stringOutput += "|\n"
+        j += 1
     
     errors = output["E"]
+    k = 0
     for k in errors:
         stringOutput += '|{:^25E}'.format(k)
         stringOutput += "|\n"
-    
+        k += 1
     stringOutput += "\n______________________________________________________________\n"
     return stringOutput
 
