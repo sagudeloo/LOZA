@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec
+from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi
 
 def trazlin(request):
     return render(request, "trazlin.html")
@@ -37,10 +37,10 @@ def viewSearch(request):
     data[len(data)-2] = ""
     return render(request, "Search.html", {"data":data})
 
-def Bisec(request):
-    return render(request, "Bisec.html")
+def BisecReg(request):
+    return render(request, "BisecReg.html")
 
-def viewBisec(request):
+def viewBisecReg(request):
     Fx = request.GET["fx"]
     A = request.GET["a"]
     A = float(A)
@@ -50,11 +50,17 @@ def viewBisec(request):
     Error = float(Error)
     N = request.GET["n"]
     N = int(N)
-    output = bisec(A,B,Fx,Error,N)
-    Dic = outputToString(output)
+    Type = request.GET["type"]
+    if Type == "FalseRule":
+        output = regulaFalsi(A,B,Fx,Error,N)
+        Dic = outputToString(output)
+    else:
+        output = bisec(A,B,Fx,Error,N)
+        Dic = outputToString(output)
+    
     data = Dic.split("\n")
     data[len(data)-2] = ""
     data[1] = ""
     data[2] = ""
-    return render(request, "Bisec.html", {"data":data})
+    return render(request, "BisecReg.html", {"data":data})
     
