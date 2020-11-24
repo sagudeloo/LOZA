@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi,newton,fixedPoint
+from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi,newton,fixedPoint,secan
 
 def trazlin(request):
     return render(request, "trazlin.html")
@@ -53,6 +53,9 @@ def viewBisecReg(request):
     Type = request.GET["type"]
     if Type == "FalseRule":
         output = regulaFalsi(A,B,Fx,Error,N)
+        Dic = outputToString(output)
+    elif Type == "Secant":
+        output = secan(A,B,Fx,N)
         Dic = outputToString(output)
     else:
         output = bisec(A,B,Fx,Error,N)
