@@ -3,3 +3,4 @@ Python/LOZA/__pycache__/*
 Python/__pycache__/*
 test.input
 .vscode
+Python/db.sqlite3
