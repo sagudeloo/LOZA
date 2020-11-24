@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from LOZA.views import trazlin,viewTrazlin,search,viewSearch,BisecReg,viewBisecReg
+from LOZA.views import trazlin,viewTrazlin,search,viewSearch,BisecReg,viewBisecReg,NewtPoint,viewNewtPoint
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,4 +25,6 @@ urlpatterns = [
     path('viewSearch/', viewSearch),
     path('BisecReg/', BisecReg),
     path('viewBisecReg/', viewBisecReg),
+    path('NewtPoint/', NewtPoint),
+    path('viewNewtPoint/', viewNewtPoint),
 ]

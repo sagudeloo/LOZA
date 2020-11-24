@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi
+from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi,newton,fixedPoint
 
 def trazlin(request):
     return render(request, "trazlin.html")
@@ -63,4 +63,24 @@ def viewBisecReg(request):
     data[1] = ""
     data[2] = ""
     return render(request, "BisecReg.html", {"data":data})
-    
+
+def NewtPoint(request):
+    return render(request, "NewtonPoint.html")
+
+def viewNewtPoint(request):
+    Fx = request.GET["fx"]
+    Gx = request.GET["gx"]
+    X0 = request.GET["x0"]
+    X0 = float(X0)
+    N = request.GET["n"]
+    N = int(N)
+    Type = request.GET["type"]
+    if Type == "Newton":
+        output = newton(Fx,X0,N)
+        Dic = outputToString(output)
+    else:
+        output = fixedPoint(Fx,Gx,X0,N)
+        Dic = outputToString(output)
+    data = Dic.split("\n")
+    data[len(data)-2] = ""
+    return render(request, "NewtonPoint.html", {"data":data})

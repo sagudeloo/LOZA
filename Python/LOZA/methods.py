@@ -109,9 +109,6 @@ def newton(fx, x0, numMax):
             d_ex = d_ex2
             x0 = y
             results.append(i , y, ex_2, error)
-
-
-
         i += 1
     output["results"] = results
     output["root"] = y
@@ -172,7 +169,7 @@ def fixedPoint(fx, gx, x0, numMax):
             results.append([i, x0, ex_2])
         i += 1
 
-    output["resultado"] = results
+    output["results"] = results
     output["root"] = y
     return output
 
