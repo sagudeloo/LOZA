@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import LOZA.views
+from LOZA.views import trazlin,verTrazlin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('trazlin/', trazlin),
+    path('verTrazlin/', verTrazlin),
 ]

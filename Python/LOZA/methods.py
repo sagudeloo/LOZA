@@ -572,7 +572,7 @@ def jacobiM(Ma, Vb, x0, tol, numMax):
          xP = xA
          cont = cont + 1
          steps[f'Step {cont+1}'] = np.copy(xA)
-    
+
     x = xA
     nIter = cont
     error = E
@@ -952,6 +952,8 @@ def Lagrange(X,Y):
         "type": 7,
         "method": "Lagrange"
     }
+    X = np.array(X)
+    Y = np.array(Y)
     n = X.size
     L = np.zeros((n,n))
     val0=0
@@ -976,6 +978,8 @@ def Trazlin(X,Y):
         "type": 8,
         "method": "Tracers"
     }
+    X = np.array(X)
+    Y = np.array(Y)
     n = X.size
     m = 2*(n-1)
     A = np.zeros((m,m))
@@ -1012,6 +1016,8 @@ def TrazlinQuadratic(X,Y):
         "type": 8,
         "method": "Tracers"
     }
+    X = np.array(X)
+    Y = np.array(Y)
     n = X.size
     m = 3*(n-1)
     A = np.zeros((m,m))
@@ -1059,6 +1065,8 @@ def TrazlinCubicos(X,Y):
         "type": 8,
         "method": "Tracers"
     }
+    X = np.array(X)
+    Y = np.array(Y)
     n = X.size
     m = 4*(n-1)
     A = np.zeros((m,m))
@@ -1226,8 +1234,9 @@ def outputTypeJ(output):
     stringOutput += "\nResults table:\n"
     
     columns = output["results"]
-    i = 0
-    for i in columns:
+    print(output)
+    for i,j in columns.items():
+
         stringOutput += '|{:^25E}'.format(i)
         stringOutput += "|\n"
         i += 1

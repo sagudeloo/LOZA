@@ -54,7 +54,7 @@ ROOT_URLCONF = 'LOZA.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['C:/Users/jonatandavid/Documents/Documentos u/Numericos/Entrega 2/LOZA/Python/LOZA/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
