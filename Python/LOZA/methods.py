@@ -541,8 +541,10 @@ def jacobiM(Ma, Vb, x0, tol, numMax):
     output = {
         "type": 4,
         "method": "Jacobi's Method",
+        "columns": ["iter", "xi", "E" ],
         "iterations": numMax
     }
+    steps = list()
     
     sX = x0.size
     xA = np.zeros((sX,1))
@@ -562,24 +564,17 @@ def jacobiM(Ma, Vb, x0, tol, numMax):
     C = np.linalg.inv(D) @ b
     
     xP = x0
-    E = 1000
+    E = 1000.0
     cont = 0
 
-    steps = {'Step 0': np.copy(xA)}
+    steps.append([cont,np.array_str(np.reshape(x0,(1,sX)))])
     while(E > tol and cont < numMax  ):
          xA = T@xP + C
          E = np.linalg.norm(xP - xA)
          xP = xA
          cont = cont + 1
-         steps[f'Step {cont+1}'] = np.copy(xA)
-    
-    x = xA
-    nIter = cont
-    error = E
-    
+         steps.append([cont,np.array_str(np.reshape(xA,(1,xA.size))),E])    
     output["results"] = steps 
-    output["E"] = error
-    output["Iteration"] = nIter
     
     return output
 
@@ -587,8 +582,10 @@ def gaussSei(Ma, Vb, x0, tol, numMax):
     output = {
         "type": 4,
         "method": "Gauss-Seidel's Method",
+        "columns": ["iter", "xi", "E" ],
         "iterations": numMax
     }
+    steps = list()
     
     sX = x0.size
     xA = np.zeros((sX,1))
@@ -610,22 +607,14 @@ def gaussSei(Ma, Vb, x0, tol, numMax):
     E = 1000
     cont = 0
 
-    steps = {'Step 0': np.copy(xA)}
+    steps.append([cont,np.array_str(np.reshape(x0,(1,sX)))])
     while(E > tol and cont < numMax  ):
          xA = T@xP + C
          E = np.linalg.norm(xP - xA)
          xP = xA
          cont = cont + 1
-         steps[f'Step {cont+1}'] = np.copy(xA)
-         
-
-    x = xA
-    nIter = cont
-    error = E
-    
+         steps.append([cont,np.array_str(np.reshape(xA,(1,xA.size))),E])
     output["results"] = steps
-    output["E"] = error
-    output["Iteration"] = nIter
 
     return output
 
@@ -633,8 +622,10 @@ def sorM(Ma, Vb, x0, w, tol, numMax):
     output = {
         "type": 4,
         "method": "SOR(Relaxation) Method",
+        "columns": ["iter", "xi", "E" ],
         "iterations": numMax
     }
+    steps = list()
     
     sX = x0.size
     xA = np.zeros((sX,1))
@@ -656,22 +647,14 @@ def sorM(Ma, Vb, x0, w, tol, numMax):
     E = 1000
     cont = 0
 
-    steps = {'Step 0': np.copy(xA)}
+    steps.append([cont,np.array_str(np.reshape(x0,(1,sX)))])
     while(E > tol and cont < numMax  ):
          xA = T@xP + C
          E = np.linalg.norm(xP - xA)
          xP = xA
          cont = cont + 1
-         steps[f'Step {cont+1}'] = np.copy(xA)
-
-    x = xA
-    nIter = cont
-    error = E
-    
-    output["results"] = steps
-    output["E"] = error
-    output["Iteration"] = nIter
-    
+         steps.append([cont,np.array_str(np.reshape(xA,(1,xA.size))),E])
+    output["results"] = steps 
     return output
 
 def vanderMon(Vx,Vy):
@@ -692,14 +675,15 @@ def vanderMon(Vx,Vy):
     
     Coef = (np.linalg.solve(A,Y)).conj().transpose()
     
-    output["A"] = A
-    output["Coef"] = Coef
+
+    output["A"] = np.array_str(np.copy(A))
+    output["Coef"] = np.array_str(np.copy(Coef))
     
     return output
 
 def difdivid(Vx,Vy):
     output = {
-        "type": 5,
+        "type": 6,
         "method": "Newton's Method"
     }
 
@@ -720,8 +704,8 @@ def difdivid(Vx,Vy):
     Coef = np.diag(D)
     
     
-    output["D"] = D
-    output["Coef"] = Coef
+    output["D"] = np.array_str(np.copy(D))
+    output["Coef"] = np.array_str(np.copy(Coef))
     
     return output
 
@@ -949,7 +933,7 @@ def cholesky(Ma, b):
 
 def Lagrange(X,Y):
     output = {
-        "type": 5,
+        "type": 7,
         "method": "Lagrange"
     }
     n = X.size
@@ -973,7 +957,7 @@ def Lagrange(X,Y):
 
 def Trazlin(X,Y):
     output = {
-        "type": 6,
+        "type": 8,
         "method": "Tracers"
     }
     n = X.size
@@ -1009,7 +993,7 @@ def Trazlin(X,Y):
 
 def TrazlinQuadratic(X,Y):
     output = {
-        "type": 6,
+        "type": 8,
         "method": "Tracers"
     }
     n = X.size
@@ -1056,7 +1040,7 @@ def TrazlinQuadratic(X,Y):
 
 def TrazlinCubicos(X,Y):
     output = {
-        "type": 6,
+        "type": 8,
         "method": "Tracers"
     }
     n = X.size
@@ -1124,10 +1108,14 @@ def outputToString(output):
     elif (type==3):
         return outputLU(output)
     elif (type==4):
-        pass
+        return outputTypeJ(output)
     elif (type==5):
-        return outputLarange(output)
+        return outputVandermonde(output)
     elif (type==6):
+        return outputNewton(output)        
+    elif (type==7):
+        return outputLarange(output)
+    elif (type==8):
         return outputTracers(output)
 
 
@@ -1220,22 +1208,16 @@ def outputLU(output):
 def outputTypeJ(output):
     stringOutput = f'\n{output["method"]}\n'
     stringOutput += "\nResults table:\n"
-    
-    columns = output["results"]
+    columns = output["columns"]
     for i in columns:
-        stringOutput += '|{:^25E}'.format(i)
+        stringOutput += '|{:^33}'.format(i)
+    stringOutput += "|\n"
+    results = output["results"]
+    for j in results:
+        for k in j:
+            stringOutput += '|{:^25}'.format(k)
         stringOutput += "|\n"
-    
-    iters = output["Iteration"]
-    for j in iters:
-        stringOutput += '|{:^25E}'.format(j)
-        stringOutput += "|\n"
-    
-    errors = output["E"]
-    for k in errors:
-        stringOutput += '|{:^25E}'.format(k)
-        stringOutput += "|\n"
-    
+
     stringOutput += "\n______________________________________________________________\n"
     return stringOutput
 
@@ -1244,20 +1226,45 @@ def outputNewton(output):
     stringOutput += "\nResults:\n"
     stringOutput += "\nDivided differences table:\n\n"
     rel = output["D"]
-    stringOutput += '{:^7f}'.format(rel[0,0]) +"   //L \n"
+    stringOutput += '{:^7}'.format(rel) +"    \n"
 
     stringOutput += "\nNewton's polynomials coefficents:\n\n"
     rel = output["Coef"]
-    stringOutput += '{:^7f}'.format(rel[0,0]) +"   //L \n"
+    stringOutput += '{:^7}'.format(rel) +"    \n"
     
     stringOutput += "\nNewton interpolating polynomials:\n\n"
     rel = output["Coef"]
+    
+    util = rel
+    
+    util = util.strip()
+    util = " ".join(util.split())
+    util = util.replace("[","")
+    util = util.replace("]","")
+    
+    j = 0
+    aux1 = list()
+    aux = " "
+    while j < len(util):
+        if(util[j]!= " "):
+            aux+=util[j]
+        else:
+            aux1.append(aux)
+            aux = " "
+        
+        j += 1
+
+    stringOutput += aux1[0]
     i = 0
-    while i < len(rel) :
-        stringOutput += '{:^7f}'.format(rel[i,0]) +"   //L \n"
-        stringOutput += format(rel[i,1],"+.6f") + "x+1"
-        stringOutput += format(rel[i,2],"+.6f") + "(x+1)x" 
-        stringOutput += format(rel[i,3],"+.6f") + "(x+1)x(x-3)"
+    while i < len(aux1) :
+        stringOutput += '{:^7}'.format(aux1[i]) +" "
+        if(i==1):
+            stringOutput +=  "(x+1)"
+        if (i==2):
+            stringOutput += "(x+1)x"
+        if (i==3):    
+            stringOutput += "(x+1)x(x-3)\n"
+        
         i += 1
 
     stringOutput += "\n______________________________________________________________\n"
@@ -1267,23 +1274,45 @@ def outputVandermonde(output):
     stringOutput = f'\n{output["method"]}\n'
     stringOutput += "\nResults:\n"
     stringOutput += "\nVandermonde's matrix:\n\n"
-    rel = output["D"]
-    stringOutput += '{:^7f}'.format(rel[0,0]) +"   //L \n"
+    rel = output["A"]
+    stringOutput += '{:^7}'.format(rel) +"  \n"
 
     stringOutput += "\nVandermonde's polynomials coefficents:\n\n"
     rel = output["Coef"]
-    stringOutput += '{:^7f}'.format(rel[0,0]) +"   //L \n"
+    stringOutput += '{:^7}'.format(rel) +"  \n"
     
     stringOutput += "\nVandermonde's interpolating polynomials:\n\n"
     rel = output["Coef"]
+    
+    util = rel
+    
+    util = " ".join(util.split())
+    util = util.replace("[","")
+    util = util.replace("]","")
+    
+    
+    j = 0
+    aux1 = list()
+    aux = " "
+    while j < len(util):
+        if(util[j]!= " "):
+            aux+=util[j]
+        else:
+            aux1.append(aux)
+            aux = " "
+        
+        j += 1
+    
+    imp = len(aux1)-1
     i = 0
-    while i < len(rel) :
-        stringOutput += '{:^7f}'.format(rel[i,0]) +"   //L \n"
-        stringOutput += format(rel[i,1],"+.6f") + "x+1"
-        stringOutput += format(rel[i,2],"+.6f") + "(x+1)x" 
-        stringOutput += format(rel[i,3],"+.6f") + "(x+1)x(x-3)"
+    while i < len(aux1) :
+        if(aux1[i].find("-") != -1 ):
+            stringOutput += '{:^7}'.format(aux1[i]) +"x^%s" % imp
+        else:
+            aux1[i] =  " +" + aux1[i]
+            stringOutput += '{:^7}'.format(aux1[i]) +"x^%s" % imp
         i += 1
-
+        imp -= 1
     stringOutput += "\n______________________________________________________________\n"
     return stringOutput
 
