@@ -699,7 +699,7 @@ def vanderMon(Vx,Vy):
 
 def difdivid(Vx,Vy):
     output = {
-        "type": 5,
+        "type": 6,
         "method": "Newton's Method"
     }
 
@@ -949,7 +949,7 @@ def cholesky(Ma, b):
 
 def Lagrange(X,Y):
     output = {
-        "type": 5,
+        "type": 7,
         "method": "Lagrange"
     }
     n = X.size
@@ -973,7 +973,7 @@ def Lagrange(X,Y):
 
 def Trazlin(X,Y):
     output = {
-        "type": 6,
+        "type": 8,
         "method": "Tracers"
     }
     n = X.size
@@ -1009,7 +1009,7 @@ def Trazlin(X,Y):
 
 def TrazlinQuadratic(X,Y):
     output = {
-        "type": 6,
+        "type": 8,
         "method": "Tracers"
     }
     n = X.size
@@ -1056,7 +1056,7 @@ def TrazlinQuadratic(X,Y):
 
 def TrazlinCubicos(X,Y):
     output = {
-        "type": 6,
+        "type": 8,
         "method": "Tracers"
     }
     n = X.size
@@ -1124,10 +1124,14 @@ def outputToString(output):
     elif (type==3):
         return outputLU(output)
     elif (type==4):
-        pass
+        return outputTypeJ(output)
     elif (type==5):
-        return outputLarange(output)
+        return outputVandermonde(output)
     elif (type==6):
+        return outputNewton(output)        
+    elif (type==7):
+        return outputLarange(output)
+    elif (type==8):
         return outputTracers(output)
 
 
@@ -1254,10 +1258,10 @@ def outputNewton(output):
     rel = output["Coef"]
     i = 0
     while i < len(rel) :
-        stringOutput += '{:^7f}'.format(rel[i,0]) +"   //L \n"
-        stringOutput += format(rel[i,1],"+.6f") + "x+1"
-        stringOutput += format(rel[i,2],"+.6f") + "(x+1)x" 
-        stringOutput += format(rel[i,3],"+.6f") + "(x+1)x(x-3)"
+        stringOutput += '{:^7f}'.format(rel[i,0]) +"x^3"
+        stringOutput += format(rel[i,1],"+.6f") + "x^2"
+        stringOutput += format(rel[i,2],"+.6f") + "x" 
+        stringOutput += format(rel[i,3],"+.6f") + "   //L \n"
         i += 1
 
     stringOutput += "\n______________________________________________________________\n"

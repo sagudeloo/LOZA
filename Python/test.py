@@ -1,4 +1,4 @@
-import methods
+import LOZA.methods as methods
 import numpy as np
 
 A = [
@@ -10,7 +10,7 @@ A = [
 
 b = [1,1,1,1]
 
-x0 = [0,0,0,0]
+x0 = np.zeros(4)
 
 tol = 0.0000001
 
