@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from LOZA.methods import Trazlin,outputToString,TrazlinCubicos
+from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch
 
 def trazlin(request):
     return render(request, "trazlin.html")
 
-def verTrazlin(request):
+def viewTrazlin(request):
     x = request.GET["x"]
     X = x.split(",")
     X = [int(i) for i in X]
@@ -14,10 +14,25 @@ def verTrazlin(request):
     Y = [float(i) for i in Y]
     output = Trazlin(X,Y)
     Dic = outputToString(output)
-    prueba = Dic.split("\n")
-    TraceCof = [prueba[7], prueba[8], prueba[9]]
-    Traz = [prueba[12], prueba[13], prueba[14]]
-    #print(Dic)
-    print(TraceCof)
-    print(Traz)
+    data = Dic.split("\n")
+    TraceCof = [data[7], data[8], data[9]]
+    Traz = [data[12], data[13], data[14]]
+
     return render(request, "trazlin.html",{"coef":TraceCof, "tracers":Traz})
+
+def search(request):
+    return render(request, "Search.html")
+
+def viewSearch(request):
+    Fx = request.GET["fx"]
+    X0 = request.GET["x0"]
+    X0 = float(X0)
+    Delta = request.GET["delta"]
+    Delta = float(Delta)
+    N = request.GET["n"]
+    N = int(N)
+    output = incremSearch(Fx,X0,Delta,N)
+    Dic = outputToString(output)
+    data = Dic.split("\n")
+    data[len(data)-2] = ""
+    return render(request, "Search.html", {"data":data})
