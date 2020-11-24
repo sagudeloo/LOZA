@@ -211,7 +211,7 @@ def incremSearch(fx, x0, d, numMax):
     output["results"] = results
     return output
 
-def bisec(a, b, fx, numMax):
+def bisec(a, b, fx, Error,numMax):
 
     output = {
         "type": 1,
@@ -222,7 +222,7 @@ def bisec(a, b, fx, numMax):
     results = list()
     x = Symbol('x')
     i = 1
-    cond = 0.0000001
+    cond = Error
     error = 1.0000000
 
     ex = sympify(fx)

@@ -1,0 +1,89 @@
+{% extends "application.html" %}
+
+    {% block content %}
+    <div class="container">
+        <form class="needs-validation" action="/viewBisec/" method="GET" novalidate>
+            <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label for="01">Fx</label>
+                <input type="text" class="form-control" id="01" name="fx" required>
+                <div class="valid-feedback">
+                Valid value 
+                </div>
+            </div>
+            </div>
+            <div class="form-row">
+            <div class="col-md-3 mb-3">
+                <label for="03">A</label>
+                <input type="text" class="form-control" id="03" name="a" required>
+                <div class="invalid-feedback">
+                Insert valid value
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="04">B</label>
+                <input type="text" class="form-control" id="04" name="b" required>
+                <div class="invalid-feedback">
+                Insert valid value
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="05">Error</label>
+                <input type="text" class="form-control" id="05" name="error" required>
+                <div class="invalid-feedback">
+                Insert valid value
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="06">N</label>
+                <input type="text" class="form-control" id="06" name="n" required>
+                <div class="invalid-feedback">
+                Insert valid value
+                </div>
+            </div>
+            </div>
+            <button class="btn btn-outline-success" type="submit">Calculate</button>
+        </form>
+        
+        <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+            // Loop over them and prevent submission
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+                }, false);
+            });
+            }, false);
+        })();
+        </script>
+
+        <table class="table">
+            <thead class="thead-dark">
+                
+                <tr>
+                    <th scope="col"><h3>| Iter | a | xm | b | f(xm) | E | </h3></th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {%for i in data %}
+                <tr>
+                        <td>{{i}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        
+
+    </div>
+{% endblock %}
