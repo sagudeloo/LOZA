@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
     path('incrementalS/', views.incrementalSearch),
-    path('lufact/', views.LUFact)
+    path('lufact/', views.LUFact),
+    path('gauss/', views.gauss)
 ]

@@ -398,7 +398,7 @@ def gaussSimple(Ma, b):
 
     output = {
         "type": 2,
-        "method": "Simple Gaussian Reduction"
+        "method": "Simple Gaussian Elimination"
     }
 
     # Getting matrix dimention
@@ -429,7 +429,7 @@ def gaussPartialPivot(Ma, b):
 
     output = {
         "type": 2,
-        "method": "Gaussian Reduction With Partial Pivoting"
+        "method": "Gaussian Elimination With Partial Pivoting"
     }
 
     # Getting matrix dimention
@@ -472,7 +472,7 @@ def gaussTotalPivot(Ma, b):
 
     output = {
         "type": 2,
-        "method": "Gaussian Reduction With Total Pivoting"
+        "method": "Gaussian Elimination With Total Pivoting"
     }
 
     # Getting matrix dimention
@@ -753,7 +753,7 @@ def LUSimple(Ma, b):
 
     output = {
         "type": 3,
-        "method": "LU With Gaussian Simple"
+        "method": "LU With Gaussian Elimination"
     }
 
     # Initialization

@@ -24,7 +24,7 @@ def LUFact(request):
     if len(request.GET)>1:
         Ma = toMatrix(request.GET["Ma"])
         b = toVector(request.GET["b"])
-        if(method == "LU With Gaussian Simple"):
+        if(method == "LU With Gaussian Elimination"):
             output = preRenderLU(methods.LUSimple(Ma, b))
         elif (method == "LU With Partial Pivot"):
             output = preRenderLU(methods.LUPartialPivot(Ma, b))
@@ -34,8 +34,24 @@ def LUFact(request):
             output = preRenderLU(methods.doolittle(Ma, b))
         elif (method == "Cholesky"):
             output = preRenderLU(methods.cholesky(Ma, b))
-        print("output:", output)
+
     return render(request, 'lufact.html', {"method": method, "output": output, "error": error})
+
+def gauss(request):
+    output = ""
+    error = ""
+    method = request.GET["method"]
+    if len(request.GET)>1:
+        Ma = toMatrix(request.GET["Ma"])
+        b = toVector(request.GET["b"])
+        if(method == "Simple Gaussian Elimination"):
+            output = preRenderGauss(methods.gaussSimple(Ma, b))
+        elif (method == "Gaussian Elimination With Partial Pivoting"):
+            output = preRenderGauss(methods.gaussPartialPivot(Ma, b))
+        elif (method == "Gaussian Elimination With Total Pivoting"):
+            output = preRenderGauss(methods.gaussTotalPivot(Ma, b))
+
+    return render(request, 'gauss.html', {"method": method, "output": output, "error": error})
 
 def preRenderLU(output):
     results = output["results"]
@@ -82,7 +98,7 @@ def preRenderGauss(output):
     newOutput["method"] = output["method"]
     steps = dict()
     for i, j in results.items():
-        auxOut += f'\n{i}\n\n'
+        auxOut = ""
         for k in j:
             for m in k:
                 auxOut += '{:^25E}'.format(m.item())
