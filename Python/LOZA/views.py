@@ -69,12 +69,11 @@ def viewBisecReg(request):
     else:
         output = bisec(A,B,Fx,Error,N)
         Dic = outputToString(output)
-    
     data = Dic.split("\n")
     data[len(data)-2] = ""
     data[1] = ""
     data[2] = ""
-    return render(request, "BisecReg.html", {"data":data})
+    return render(request, "BisecReg.html", {"data":output})
 
 def NewtPoint(request):
     return render(request, "NewtonPoint.html")
@@ -95,7 +94,7 @@ def viewNewtPoint(request):
         Dic = outputToString(output)
     data = Dic.split("\n")
     data[len(data)-2] = ""
-    return render(request, "NewtonPoint.html", {"data":data})
+    return render(request, "NewtonPoint.html", {"data":output})
 
 def RaizMul(request):
     return render(request,"RaizMul.html")
@@ -110,4 +109,4 @@ def viewRaizMul(request):
     Dic = outputToString(output)
     data = Dic.split("\n")
     data[len(data)-2] = ""
-    return render(request, "RaizMul.html", {"data":data})
+    return render(request, "RaizMul.html", {"data":output})

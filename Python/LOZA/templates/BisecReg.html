@@ -82,16 +82,18 @@
 
         <table class="table">
             <thead class="thead-dark">
-                
                 <tr>
-                    <th scope="col"><h3>| Iter | a | xm | b | f(xm) | E | </h3></th>
-                    
+                    {%for i in data.columns %}
+                        <th scope="col"><h3>{{i}}</h3></th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>
-                {%for i in data %}
+                {%for i in data.results %}
                 <tr>
-                        <td>{{i}}</td>
+                    {%for j in i %}
+                        <td>{{j}}</td>
+                    {% endfor %}  
                 </tr>
                 {% endfor %}
             </tbody>

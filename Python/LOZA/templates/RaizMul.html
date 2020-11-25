@@ -53,19 +53,22 @@
         </script>
 
         <table class="table">
-            <thead class="thead-dark">
-                
-                <tr>
-                    <th scope="col">VALUES </th>
-                </tr>
-            </thead>
-            <tbody>
-                {%for i in data %}
-                <tr>
-                        <td><h4>{{i}}</h4></td>
-                </tr>
-                {% endfor %}
-            </tbody>
+          <thead class="thead-dark">
+            <tr>
+              {%for i in data.columns %}
+                  <th scope="col"><h3>{{i}}</h3></th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+              {%for i in data.results %}
+              <tr>
+                  {%for j in i %}
+                      <td>{{j}}</td>
+                  {% endfor %}  
+              </tr>
+              {% endfor %}
+          </tbody>
         </table>
   
         
