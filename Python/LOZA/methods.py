@@ -56,14 +56,12 @@ def mulRoots(fx, x0, numMax):
             ex = ex_2
             x0 = y
             results.append([i , y, ex_2, error])
-
         i += 1
     output["results"] = results
     output["root"] = y
     return output
 
 def newton(fx, x0, numMax):
-
     output = {
         "type": 1,
         "method": "Newton",
@@ -83,7 +81,7 @@ def newton(fx, x0, numMax):
     y = x0
     ex_2 = ex
     d_ex2 = ex
-
+    print("error", error, "cond", cond, "i", i, "numMax",numMax)
     while((error > cond) and (i < numMax)):
         if i == 0:
             ex_2 = ex.subs(x, x0)
@@ -92,24 +90,27 @@ def newton(fx, x0, numMax):
             d_ex2 = d_ex2.evalf()
             results.append([i, x0, ex_2,error])
         else:
-            y2 = sympify(y)
+            y2 = y
             y = y2 - (ex_2/d_ex2)
+            y = y.evalf()
 
             ex_2 = ex.subs(x0, y)
             ex_2 = ex.evalf()
+            
             d_ex2 = d_ex2.subs(x0, y)
-
-            d_ex2 = d_ex2.evalf(x0, y)
+            d_ex2 = d_ex2.evalf()
 
             error = Abs(y - x0)
-            er = sympify(error)
+            er = error
+            print("tipo er:", type(er))
             error = er.evalf()
-            print(str(error))
+            print("error dentro del ciclo:",str(error),"tipo:",type(error))
             ex = ex_2
             d_ex = d_ex2
             x0 = y
             results.append([i , y, ex_2, error])
         i += 1
+        print("error", error, "cond", cond, "i", i, "numMax",numMax)
     output["results"] = results
     output["root"] = y
     return output
