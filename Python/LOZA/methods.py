@@ -546,6 +546,7 @@ def jacobiM(Ma, Vb, x0, tol, numMax):
     }
     steps = list()
     
+    x0 = np.zeros((x0,1))
     sX = x0.size
     xA = np.zeros((sX,1))
     
@@ -587,6 +588,8 @@ def gaussSei(Ma, Vb, x0, tol, numMax):
     }
     steps = list()
     
+    x0 = np.zeros((x0,1))
+    
     sX = x0.size
     xA = np.zeros((sX,1))
     
@@ -627,6 +630,7 @@ def sorM(Ma, Vb, x0, w, tol, numMax):
     }
     steps = list()
     
+    x0 = np.zeros((x0,1))
     sX = x0.size
     xA = np.zeros((sX,1))
     

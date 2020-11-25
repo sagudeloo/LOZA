@@ -1,0 +1,74 @@
+{%extends "application.html" %}
+
+{% block content%}
+<html>
+
+ <div class="container">
+    <div class="h4 p-3 mb-2 bg-dark text-white rounded-lg">{{method}}</div>
+ </div> 
+<form method = "get">
+  <div class="container" style="padding: 30pt;">
+    <div class="row">
+      <div class="col">
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text">x0</span>
+      </div>
+      <input type="text" class="form-control" aria-label="x0" id="x0" name = "x0" required>
+    </div>
+  
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" >tol</span>
+      </div>
+      <input type="text" class="form-control" aria-label="tol" id="tol" name = "tol" required>
+    </div>
+    
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" >numMax</span>
+      </div>
+      <input type="text" class="form-control" aria-label="numMax" id="numMax" name="numMax" required>
+    </div>
+    
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" >b</span>
+      </div>
+      <input type="text" class="form-control" aria-label="b" id="b" name="b" required>
+    </div>
+    
+  
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text">A</span>
+      </div>
+      <textarea class="form-control" aria-label="With textarea" id="A" name="A" required></textarea>
+    </div>
+  
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+  {% if output %}
+  <table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col">Iteration #</th>
+          <th scope="col">xi</th>
+          <th scope="col">Error</th>
+        </tr>
+      </thead>
+    <tbody>
+      {% for i,row in output %}
+      <tr>
+        <th scope="row">{{ i }}</th>
+        <td>{{ row.0 }}</td>
+        <td>{{ row.1 }}</td>
+      </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  {% endif %}
+</html>
+
+{% endblock%}

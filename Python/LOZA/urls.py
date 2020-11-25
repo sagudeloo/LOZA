@@ -15,8 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import LOZA.views
+import LOZA.views as l
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', l.showHome),
+    path('Jacobi/', l.tJacobi),
+    path('GaussSeidel/', l.tGaussSei),
+    path('SOR/', l.tSOR),
+    path('Vandermonde/', l.tVandermonde),
+    path('DiferenciasDivididas/', l.tDifdivid)
 ]

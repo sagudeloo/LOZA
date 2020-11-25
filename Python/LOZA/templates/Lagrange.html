@@ -1,0 +1,52 @@
+{%extends "application.html" %}
+
+{% block content%}
+<html>
+
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="basic-addon1">@</span>
+    </div>
+    <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+  </div>
+  
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="basic-addon1">@</span>
+    </div>
+    <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+  </div>
+  
+
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text">With textarea</span>
+  </div>
+  <textarea class="form-control" aria-label="A Matrix"></textarea>
+</div>
+
+  <table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+          <th scope="col">Iteration #</th>
+          <th scope="col">xi</th>
+          <th scope="col">Error</th>
+        </tr>
+      </thead>
+    <tbody>
+      
+      <tr>
+        <th scope="row">0</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button type="button" class="btn btn-primary">Primary</button>
+
+  <input class="btn btn-primary" type="submit" value="Submit">
+</html>
+
+{% endblock%}
