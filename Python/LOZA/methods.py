@@ -1,7 +1,6 @@
 import numpy as np
 import numpy.matlib
 from numpy.lib import scimath
-import cmath
 from sympy import *
 from scipy import linalg
 
