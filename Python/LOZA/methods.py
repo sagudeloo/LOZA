@@ -32,11 +32,11 @@ def mulRoots(fx, x0, numMax):
     d2_ex = diff(d_ex, x)
 
 
-    while (error > cond and i < numMax):
+    while((error > cond) and (i < numMax)):
         if i == 0:
             ex_2 = ex.subs(x, x0)
             ex_2 = ex_2.evalf()
-            results.append([i, x0, ex_2])
+            results.append([i, x0, ex_2,error])
         else:
             d_ex2 = d_ex.subs(x, x0)
             d_ex2 = d_ex2.evalf()
@@ -90,7 +90,7 @@ def newton(fx, x0, numMax):
             ex_2 = ex_2.evalf()
             d_ex2 = d_ex.subs(x, x0)
             d_ex2 = d_ex2.evalf()
-            results.append([i, x0, ex_2])
+            results.append([i, x0, ex_2,error])
         else:
             y2 = sympify(y)
             y = y2 - (ex_2/d_ex2)
@@ -166,7 +166,7 @@ def fixedPoint(fx, gx, x0, numMax):
 
             x0 = y
 
-            results.append([i, x0, ex_2])
+            results.append([i, x0, ex_2,error])
         i += 1
 
     output["results"] = results

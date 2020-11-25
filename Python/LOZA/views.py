@@ -92,8 +92,6 @@ def viewNewtPoint(request):
     else:
         output = fixedPoint(Fx,Gx,X0,N)
         Dic = outputToString(output)
-    data = Dic.split("\n")
-    data[len(data)-2] = ""
     return render(request, "NewtonPoint.html", {"data":output})
 
 def RaizMul(request):
