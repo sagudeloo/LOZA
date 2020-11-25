@@ -1,4 +1,4 @@
-import methods
+from LOZA import methods
 
 def main():
     x = int(input("Enter the number of the function/method you would like to use: \n Multiple roots:1 \n Newton's method:2 \n Fixed-point iteration:3 \n Incremental search:4 \n Bisection method:5 \n Regula falsi:6 \n Secant method:7 \n Simple Gauss:8 \n Gauss partial pivot:9 \n Gauss total pivot:0 \n"))

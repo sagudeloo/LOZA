@@ -1,0 +1,94 @@
+{% extends "application.html" %}
+
+    {% block content %}
+    <div class="container">
+        <form class="needs-validation" action="/viewTrazlin/" method="GET" novalidate>
+            <div class="form-row">
+              <div class="col-md-6 mb-3">
+                <label for="validationCustom01">Insert X</label>
+                <input type="text" class="form-control" name="x" required>
+                <div class="valid-feedback">
+                  Valid value 
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="validationCustom02">Insert Y</label>
+                <input type="text" class="form-control" name="y" required>
+                <div class="valid-feedback">
+                    Valid value
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="custom-control custom-radio col-md-3 mb-3">
+                    <input type="radio" class="custom-control-input" id="1" value="LinearTracers" name="type" required>
+                    <label class="custom-control-label" for="1">LinearTracers</label>
+                </div>
+                <div class="custom-control custom-radio col-md-3 mb-3">
+                    <input type="radio" class="custom-control-input" id="2" value="QuadraticPlotters" name="type" required>
+                    <label class="custom-control-label" for="2">QuadraticPlotters</label>
+                </div>
+                <div class="custom-control custom-radio col-md-3 mb-3">
+                    <input type="radio" class="custom-control-input" id="3" value="CubicTracers" name="type" required>
+                    <label class="custom-control-label" for="3">CubicTracers</label>
+                </div>
+            </div>
+            </div>
+            <button class="btn btn-outline-success" type="submit">Calculate</button>
+        </form>
+          
+        <script>
+          // Example starter JavaScript for disabling form submissions if there are invalid fields
+          (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+              // Fetch all the forms we want to apply custom Bootstrap validation styles to
+              var forms = document.getElementsByClassName('needs-validation');
+              // Loop over them and prevent submission
+              var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                  if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                  form.classList.add('was-validated');
+                }, false);
+              });
+            }, false);
+          })();
+        </script>
+
+        <table class="table">
+            <thead class="thead-dark">
+                <h3>coefficients</h3>
+                <tr>
+                    <th scope="col">VALUES </th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for i in coef %}
+                <tr>
+                        <td><h4>{{i}}</h4></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+  
+        <table class="table">
+            <thead>
+                <h3>Polynomial</h3>
+                <tr>
+                    <th scope="col">VALUES</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for i in tracers %}
+                <tr>
+                        <td><h4>{{i}}</h4></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    
+    {% endblock %}

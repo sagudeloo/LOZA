@@ -13,56 +13,60 @@ def mulRoots(fx, x0, numMax):
         "iterations": numMax
     }
     results = list()
+    
     x = Symbol('x')
-    i = 0
+    
     cond = 0.0000001
-    error = 1.0000000
+    error = 1000
+
     ex = sympify(fx)
 
     d_ex = diff(ex, x)
-    d2_ex = diff(d_ex, x)
+    d2_ex = diff(d_ex,x)
 
-    y = x0
-    ex_2 = 0
-    d_ex2 = 0
-    d2_ex2 = 0
+    xP = x0
+    ex_2 = ex.subs(x,x0)
+    ex_2 = ex_2.evalf()
+    
+    d_ex2 = d_ex.subs(x, x0)
+    d_ex2 = d_ex2.evalf()
 
-    d_ex = diff(ex, x)
-    d2_ex = diff(d_ex, x)
+    d2_ex2 = d2_ex.subs(x, x0)
+    d2_ex2 = d2_ex2.evalf()
 
-
-    while error > cond and i < numMax:
-        if i == 0:
-            ex_2 = ex.subs(x, x0)
+    i = 0
+    results.append([i, x0, ex_2, error])
+    while((error > cond) and (i < numMax)): 
+        if(i == 0):                    
+            ex_2 = ex.subs(x, xP)
             ex_2 = ex_2.evalf()
-            results.append([i, x0, ex_2])
         else:
-            d_ex2 = d_ex.subs(x, x0)
+            d_ex2 = d_ex.subs(x, xP)
             d_ex2 = d_ex2.evalf()
 
-            d2_ex2 = d2_ex.subs(x, x0)
+            d2_ex2 = d2_ex.subs(x, xP)
             d2_ex2 = d2_ex2.evalf()
+            
+            xA = xP - (ex_2*d_ex2)/((d_ex2)**2 - ex_2*d2_ex2)
 
-            y2 = sympify(y)
-            y = y2 - ((ex_2 * d_ex2) / Pow(d_ex2, 2) - (ex_2*d2_ex2))
+            ex_A = ex.subs(x,xA)
+            ex_A = ex_A.evalf()
 
-            ex_2 = ex_2.subs(x0, y)
-            error = Abs(y - x0)
-            ex_2 = ex_2.evalf()
-            er = sympify(error)
-            er.evalf()
-            error = er
-            ex = ex_2
-            x0 = y
-            results.append(i , y, ex_2, error)
-
+            error = Abs(xA - xP)
+            error = error.evalf()
+            er = error
+            
+            ex_2 = ex_A
+            xP = xA
+            results.append([i , xA, ex_2, er])
+            print("er",er,"xA",xA)
         i += 1
     output["results"] = results
-    output["root"] = y
+    output["root"] = xA
     return output
 
-def newton(fx, x0, numMax):
 
+def newton(fx, x0, numMax):
     output = {
         "type": 1,
         "method": "Newton",
@@ -70,50 +74,48 @@ def newton(fx, x0, numMax):
         "iterations": numMax
     }
     results = list()
+    
     x = Symbol('x')
-    i = 0
+    
     cond = 0.0000001
-    error = 1.0000000
+    error = 1000
 
     ex = sympify(fx)
 
     d_ex = diff(ex, x)
 
-    y = x0
-    ex_2 = ex
-    d_ex2 = ex
+    xP = x0
+    ex_2 = ex.subs(x,x0)
+    ex_2 = ex_2.evalf()
+    
+    d_ex2 = d_ex.subs(x, x0)
+    d_ex2 = d_ex2.evalf()
 
-    while((error > cond) and (i < numMax)):
-        if i == 0:
-            ex_2 = ex.subs(x, x0)
+    i = 0
+    results.append([i, x0, ex_2, error])
+    while((error > cond) and (i < numMax)): 
+        if(i == 0):                    
+            ex_2 = ex.subs(x, xP)
             ex_2 = ex_2.evalf()
-            d_ex2 = d_ex.subs(x, x0)
-            d_ex2 = d_ex2.evalf()
-            results.append([i, x0, ex_2])
         else:
-            y2 = sympify(y)
-            y = y2 - (ex_2/d_ex2)
+            d_ex2 = d_ex.subs(x, xP)
+            d_ex2 = d_ex2.evalf()
+            
+            xA = xP - (ex_2/d_ex2)
 
-            ex_2 = ex.subs(x0, y)
-            ex_2 = ex.evalf()
-            d_ex2 = d_ex2.subs(x0, y)
+            ex_A = ex.subs(x,xA)
+            ex_A = ex_A.evalf()
 
-            d_ex2 = d_ex2.evalf(x0, y)
-
-            error = Abs(y - x0)
-            er = sympify(error)
-            error = er.evalf()
-            print(str(error))
-            ex = ex_2
-            d_ex = d_ex2
-            x0 = y
-            results.append(i , y, ex_2, error)
-
-
-
+            error = Abs(xA - xP)
+            error = error.evalf()
+            er = error
+            
+            ex_2 = ex_A
+            xP = xA
+            results.append([i , xA, ex_2, er])
         i += 1
     output["results"] = results
-    output["root"] = y
+    output["root"] = xA
     return output
 
 def fixedPoint(fx, gx, x0, numMax):
@@ -168,10 +170,10 @@ def fixedPoint(fx, gx, x0, numMax):
 
             x0 = y
 
-            results.append([i, x0, ex_2])
+            results.append([i, x0, ex_2,error])
         i += 1
 
-    output["resultado"] = results
+    output["results"] = results
     output["root"] = y
     return output
 
@@ -210,7 +212,7 @@ def incremSearch(fx, x0, d, numMax):
     output["results"] = results
     return output
 
-def bisec(a, b, fx, numMax):
+def bisec(a, b, fx, Error,numMax):
 
     output = {
         "type": 1,
@@ -221,7 +223,7 @@ def bisec(a, b, fx, numMax):
     results = list()
     x = Symbol('x')
     i = 1
-    cond = 0.0000001
+    cond = Error
     error = 1.0000000
 
     ex = sympify(fx)
@@ -274,7 +276,7 @@ def bisec(a, b, fx, numMax):
     output["root"] = xm
     return output
 
-def regulaFalsi(a, b, fx, numMax):
+def regulaFalsi(a, b, fx, Error,numMax):
 
     output = {
         "type": 1,
@@ -285,7 +287,7 @@ def regulaFalsi(a, b, fx, numMax):
     results = list()
     x = Symbol('x')
     i = 1
-    cond = 0.0000001
+    cond = Error
     error = 1.0000000
 
     ex = sympify(fx)
@@ -572,7 +574,7 @@ def jacobiM(Ma, Vb, x0, tol, numMax):
          xP = xA
          cont = cont + 1
          steps[f'Step {cont+1}'] = np.copy(xA)
-    
+
     x = xA
     nIter = cont
     error = E
@@ -952,6 +954,8 @@ def Lagrange(X,Y):
         "type": 7,
         "method": "Lagrange"
     }
+    X = np.array(X)
+    Y = np.array(Y)
     n = X.size
     L = np.zeros((n,n))
     val0=0
@@ -976,6 +980,8 @@ def Trazlin(X,Y):
         "type": 8,
         "method": "Tracers"
     }
+    X = np.array(X)
+    Y = np.array(Y)
     n = X.size
     m = 2*(n-1)
     A = np.zeros((m,m))
@@ -1012,6 +1018,8 @@ def TrazlinQuadratic(X,Y):
         "type": 8,
         "method": "Tracers"
     }
+    X = np.array(X)
+    Y = np.array(Y)
     n = X.size
     m = 3*(n-1)
     A = np.zeros((m,m))
@@ -1059,6 +1067,8 @@ def TrazlinCubicos(X,Y):
         "type": 8,
         "method": "Tracers"
     }
+    X = np.array(X)
+    Y = np.array(Y)
     n = X.size
     m = 4*(n-1)
     A = np.zeros((m,m))
@@ -1226,8 +1236,9 @@ def outputTypeJ(output):
     stringOutput += "\nResults table:\n"
     
     columns = output["results"]
-    i = 0
-    for i in columns:
+    print(output)
+    for i,j in columns.items():
+
         stringOutput += '|{:^25E}'.format(i)
         stringOutput += "|\n"
         i += 1
