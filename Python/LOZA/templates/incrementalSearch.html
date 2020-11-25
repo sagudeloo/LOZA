@@ -1,0 +1,81 @@
+{% extends "application.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="h4 p-3 mb-2 bg-dark text-white rounded-lg">{{method}}</div>
+</div>
+
+<form action="/incrementalS/" method="get">
+    <div class="container" style="padding: 30pt;">
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">f(x)</sub> </span>
+                    </div>
+                    <input type="text" class="form-control" id="function" name="function"
+                        aria-describedby="basic-addon3" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">X<sub>0</sub> </span>
+                    </div>
+                    <input type="number" step="0.00001" class="form-control" id="x0" name="x0" aria-describedby="basic-addon3"
+                        required>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">&Delta;X </span>
+                    </div>
+                    <input type="number" step="0.00001" class="form-control" id="dx" name="dx" aria-describedby="basic-addon3"
+                        required>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">Iterations</span>
+                    </div>
+                    <input type="number" class="form-control" id="iterations" name="iterations"
+                        aria-describedby="basic-addon3" required>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Calculate</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="method" name="method" value="{{method}}">
+</form>
+
+{% if output %}
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Root #</th>
+                <th scope="col">A</th>
+                <th scope="col">B</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i,row in output %}
+                <tr>
+                    <th scope="row">{{ i }}</th>
+                    <td>{{ row.0 }}</td>
+                    <td>{{ row.1 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+{% endblock %}

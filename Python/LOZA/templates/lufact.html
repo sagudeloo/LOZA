@@ -1,0 +1,70 @@
+{% extends "application.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="h4 p-3 mb-2 bg-dark text-white rounded-lg">{{method}}</div>
+</div>
+
+<form action="/lufact/" method="get">
+    <div class="container" style="padding: 30pt;">
+        <div class="row">
+            <div class="col">
+                <div class="input-group" style="margin: 20pt 0;">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">A</span>
+                    </div>
+                    <textarea class="form-control" aria-label="With textarea" id="Ma" name="Ma" required></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon3">b</sub> </span>
+                    </div>
+                    <input type="text" class="form-control" id="b" name="b" aria-describedby="basic-addon3" required>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col">
+                <button type="submit" class="btn btn-primary">Calculate</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="method" name="method" value="{{method}}">
+</form>
+
+{% if output %}
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-1">
+                    <h4 ><span class="badge badge-dark">X:</span></h4>
+                </div>
+                <div class="col-5">
+                    {% for i in output.x %}
+                    <div class="row">
+                        <h3>{{i}}</h3>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% for i,j in output.results.items %}
+    <div class="card" style="margin: 10pt 0;">
+        <div class="card-body">
+            <h4 class="card-title"><span class="badge badge-dark">{{i}}</span></h5>
+            <pre class="h5">{{j}}</pre>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

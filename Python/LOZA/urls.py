@@ -15,8 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import LOZA.views
+from LOZA import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.index),
+    path('incrementalS/', views.incrementalSearch),
+    path('lufact/', views.LUFact),
+    path('gauss/', views.gauss)
 ]
