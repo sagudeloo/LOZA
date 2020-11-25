@@ -2,7 +2,7 @@
 
     {% block content %}
     <div class="container">
-        <form class="needs-validation" action="/verTrazlin/" method="GET" novalidate>
+        <form class="needs-validation" action="/viewTrazlin/" method="GET" novalidate>
             <div class="form-row">
               <div class="col-md-6 mb-3">
                 <label for="validationCustom01">Insert X</label>
@@ -18,6 +18,20 @@
                     Valid value
                 </div>
               </div>
+              <div class="col-md-6 mb-3">
+                <div class="custom-control custom-radio col-md-3 mb-3">
+                    <input type="radio" class="custom-control-input" id="1" value="LinearTracers" name="type" required>
+                    <label class="custom-control-label" for="1">LinearTracers</label>
+                </div>
+                <div class="custom-control custom-radio col-md-3 mb-3">
+                    <input type="radio" class="custom-control-input" id="2" value="QuadraticPlotters" name="type" required>
+                    <label class="custom-control-label" for="2">QuadraticPlotters</label>
+                </div>
+                <div class="custom-control custom-radio col-md-3 mb-3">
+                    <input type="radio" class="custom-control-input" id="3" value="CubicTracers" name="type" required>
+                    <label class="custom-control-label" for="3">CubicTracers</label>
+                </div>
+            </div>
             </div>
             <button class="btn btn-outline-success" type="submit">Calculate</button>
         </form>

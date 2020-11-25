@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi,newton,fixedPoint,secan,mulRoots
+from LOZA.methods import Trazlin,TrazlinQuadratic,TrazlinCubicos,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi,newton,fixedPoint,secan,mulRoots
 
 def trazlin(request):
     return render(request, "trazlin.html")
@@ -12,8 +12,17 @@ def viewTrazlin(request):
     y = request.GET["y"]
     Y = y.split(",")
     Y = [float(i) for i in Y]
-    output = Trazlin(X,Y)
-    Dic = outputToString(output)
+    Type = request.GET["type"]
+    if Type == "LinearTracers":
+        output = Trazlin(X,Y)
+        Dic = outputToString(output)
+    elif Type == "QuadraticPlotters":
+        output = TrazlinQuadratic(X,Y)
+        Dic = outputToString(output)
+    else:
+        output = TrazlinCubicos(X,Y)
+        Dic = outputToString(output)
+    
     data = Dic.split("\n")
     TraceCof = [data[7], data[8], data[9]]
     Traz = [data[12], data[13], data[14]]

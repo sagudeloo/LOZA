@@ -32,7 +32,7 @@ def mulRoots(fx, x0, numMax):
     d2_ex = diff(d_ex, x)
 
 
-    while error > cond and i < numMax:
+    while (error > cond and i < numMax):
         if i == 0:
             ex_2 = ex.subs(x, x0)
             ex_2 = ex_2.evalf()
@@ -55,7 +55,7 @@ def mulRoots(fx, x0, numMax):
             error = er
             ex = ex_2
             x0 = y
-            results.append(i , y, ex_2, error)
+            results.append([i , y, ex_2, error])
 
         i += 1
     output["results"] = results
@@ -108,7 +108,7 @@ def newton(fx, x0, numMax):
             ex = ex_2
             d_ex = d_ex2
             x0 = y
-            results.append(i , y, ex_2, error)
+            results.append([i , y, ex_2, error])
         i += 1
     output["results"] = results
     output["root"] = y
