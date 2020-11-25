@@ -22,10 +22,8 @@ def tJacobi(request):
     output = methods.jacobiM(A,b,x0,tol,numMax)
     Dic = methods.outputToString(output)
     data = Dic.split("\n")
-    Coef = [data[7], data[8], data[9]]
-    Traz = [data[12], data[13], data[14]]
-
-    return render(request, "trazlin.html",{"coef":Coef, "tracers":Traz})
+    
+    return render(request, "jacobi.html", {"method": "Incremental Search", "output": zip(range(1,len(output['results'])+1), output['results']), "error": ""})
 
 def showGaussSei(request):
     return render(request,"gauss_seidel.html")

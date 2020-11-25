@@ -20,9 +20,10 @@ import LOZA.views as l
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', l.showHome),
-    path('Jacobi/', l.tJacobi),
-    path('GaussSeidel/', l.tGaussSei),
-    path('SOR/', l.tSOR),
-    path('Vandermonde/', l.tVandermonde),
-    path('DiferenciasDivididas/', l.tDifdivid)
+    path('Jacobi/', l.showJacobi),
+    path('GaussSeidel/', l.showGaussSei),
+    path('SOR/', l.showSor),
+    path('Vandermonde/', l.showVandermonde),
+    path('DiferenciasDivididas/', l.showDifdivid),
+    path('Lagrange/', l.showLagrange)
 ]
