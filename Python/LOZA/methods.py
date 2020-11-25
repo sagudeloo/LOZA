@@ -1,7 +1,6 @@
 import numpy as np
 import numpy.matlib
 from numpy.lib import scimath
-import cmath
 from sympy import *
 from scipy import linalg
 
@@ -14,52 +13,58 @@ def mulRoots(fx, x0, numMax):
         "iterations": numMax
     }
     results = list()
+    
     x = Symbol('x')
-    i = 0
+    
     cond = 0.0000001
-    error = 1.0000000
+    error = 1000
+
     ex = sympify(fx)
 
     d_ex = diff(ex, x)
-    d2_ex = diff(d_ex, x)
+    d2_ex = diff(d_ex,x)
 
-    y = x0
-    ex_2 = 0
-    d_ex2 = 0
-    d2_ex2 = 0
+    xP = x0
+    ex_2 = ex.subs(x,x0)
+    ex_2 = ex_2.evalf()
+    
+    d_ex2 = d_ex.subs(x, x0)
+    d_ex2 = d_ex2.evalf()
 
-    d_ex = diff(ex, x)
-    d2_ex = diff(d_ex, x)
+    d2_ex2 = d2_ex.subs(x, x0)
+    d2_ex2 = d2_ex2.evalf()
 
-
-    while((error > cond) and (i < numMax)):
-        if i == 0:
-            ex_2 = ex.subs(x, x0)
+    i = 0
+    results.append([i, x0, ex_2, error])
+    while((error > cond) and (i < numMax)): 
+        if(i == 0):                    
+            ex_2 = ex.subs(x, xP)
             ex_2 = ex_2.evalf()
-            results.append([i, x0, ex_2,error])
         else:
-            d_ex2 = d_ex.subs(x, x0)
+            d_ex2 = d_ex.subs(x, xP)
             d_ex2 = d_ex2.evalf()
 
-            d2_ex2 = d2_ex.subs(x, x0)
+            d2_ex2 = d2_ex.subs(x, xP)
             d2_ex2 = d2_ex2.evalf()
+            
+            xA = xP - (ex_2*d_ex2)/((d_ex2)**2 - ex_2*d2_ex2)
 
-            y2 = sympify(y)
-            y = y2 - ((ex_2 * d_ex2) / Pow(d_ex2, 2) - (ex_2*d2_ex2))
+            ex_A = ex.subs(x,xA)
+            ex_A = ex_A.evalf()
 
-            ex_2 = ex_2.subs(x0, y)
-            error = Abs(y - x0)
-            ex_2 = ex_2.evalf()
-            er = sympify(error)
-            er.evalf()
-            error = er
-            ex = ex_2
-            x0 = y
-            results.append([i , y, ex_2, error])
+            error = Abs(xA - xP)
+            error = error.evalf()
+            er = error
+            
+            ex_2 = ex_A
+            xP = xA
+            results.append([i , xA, ex_2, er])
+            print("er",er,"xA",xA)
         i += 1
     output["results"] = results
-    output["root"] = y
+    output["root"] = xA
     return output
+
 
 def newton(fx, x0, numMax):
     output = {
@@ -69,50 +74,48 @@ def newton(fx, x0, numMax):
         "iterations": numMax
     }
     results = list()
+    
     x = Symbol('x')
-    i = 0
+    
     cond = 0.0000001
-    error = 1.0000000
+    error = 1000
 
     ex = sympify(fx)
 
     d_ex = diff(ex, x)
 
-    y = x0
-    ex_2 = ex
-    d_ex2 = ex
-    print("error", error, "cond", cond, "i", i, "numMax",numMax)
-    while((error > cond) and (i < numMax)):
-        if i == 0:
-            ex_2 = ex.subs(x, x0)
+    xP = x0
+    ex_2 = ex.subs(x,x0)
+    ex_2 = ex_2.evalf()
+    
+    d_ex2 = d_ex.subs(x, x0)
+    d_ex2 = d_ex2.evalf()
+
+    i = 0
+    results.append([i, x0, ex_2, error])
+    while((error > cond) and (i < numMax)): 
+        if(i == 0):                    
+            ex_2 = ex.subs(x, xP)
             ex_2 = ex_2.evalf()
-            d_ex2 = d_ex.subs(x, x0)
-            d_ex2 = d_ex2.evalf()
-            results.append([i, x0, ex_2,error])
         else:
-            y2 = y
-            y = y2 - (ex_2/d_ex2)
-            y = y.evalf()
-
-            ex_2 = ex.subs(x0, y)
-            ex_2 = ex.evalf()
-            
-            d_ex2 = d_ex2.subs(x0, y)
+            d_ex2 = d_ex.subs(x, xP)
             d_ex2 = d_ex2.evalf()
+            
+            xA = xP - (ex_2/d_ex2)
 
-            error = Abs(y - x0)
+            ex_A = ex.subs(x,xA)
+            ex_A = ex_A.evalf()
+
+            error = Abs(xA - xP)
+            error = error.evalf()
             er = error
-            print("tipo er:", type(er))
-            error = er.evalf()
-            print("error dentro del ciclo:",str(error),"tipo:",type(error))
-            ex = ex_2
-            d_ex = d_ex2
-            x0 = y
-            results.append([i , y, ex_2, error])
+            
+            ex_2 = ex_A
+            xP = xA
+            results.append([i , xA, ex_2, er])
         i += 1
-        print("error", error, "cond", cond, "i", i, "numMax",numMax)
     output["results"] = results
-    output["root"] = y
+    output["root"] = xA
     return output
 
 def fixedPoint(fx, gx, x0, numMax):
