@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi,newton,fixedPoint,secan
+from LOZA.methods import Trazlin,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi,newton,fixedPoint,secan,mulRoots
 
 def trazlin(request):
     return render(request, "trazlin.html")
@@ -87,3 +87,18 @@ def viewNewtPoint(request):
     data = Dic.split("\n")
     data[len(data)-2] = ""
     return render(request, "NewtonPoint.html", {"data":data})
+
+def RaizMul(request):
+    return render(request,"RaizMul.html")
+
+def viewRaizMul(request):
+    Fx = request.GET["fx"]
+    X0 = request.GET["x0"]
+    X0 = float(X0)
+    N = request.GET["n"]
+    N = int(N)
+    output = mulRoots(Fx,X0,N)
+    Dic = outputToString(output)
+    data = Dic.split("\n")
+    data[len(data)-2] = ""
+    return render(request, "RaizMul.html", {"data":data})
