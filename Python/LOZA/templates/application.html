@@ -13,23 +13,28 @@
 
     <div class="container" style="padding: 30pt 0;">
 
-        <div class="row justify-content-md-center">
-            <div class="col-md-auto">
-                <p class="h3">Select the method which you want to use</p>
+        <div class="container" style="margin: 20pt 0;">
+            <div class="row justify-content-md-center">
+                <div class="col-md-auto">
+                    <p class="h3">Select the method which you want to use</p>
+                </div>
             </div>
-        </div>
-        <div class="row justify-content-md-center">
-            <div class="col-md-auto">
-                <div class="dropdown ">
-                    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Methods
-                    </a>
+            <div class="row justify-content-md-center">
+                <div class="col-md-auto">
+                    <div class="dropdown ">
+                        <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Methods
+                        </a>
 
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="/incrementalS/?method=Incremental+Search">Incremental Search</a>
+                            <a class="dropdown-item" href="/lufact/?method=LU+With+Gaussian+Simple">LU With Gaussian Simplen</a>
+                            <a class="dropdown-item" href="/lufact/?method=LU+With+Partial+Pivot">LU With Partial Pivot</a>
+                            <a class="dropdown-item" href="/lufact/?method=Crout">Crout</a>
+                            <a class="dropdown-item" href="/lufact/?method=Doolittle">Doolittle</a>
+                            <a class="dropdown-item" href="/lufact/?method=Cholesky">Cholesky</a>
+                        </div>
                     </div>
                 </div>
             </div>
