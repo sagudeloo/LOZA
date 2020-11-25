@@ -23,7 +23,7 @@ urlpatterns = [
     path('', views.index),
     path('incrementalS/', views.incrementalSearch),
     path('lufact/', views.LUFact),
-    path('gauss/', views.gauss)
+    path('gauss/', views.gauss),
     path('trazlin/', trazlin),
     path('viewTrazlin/', viewTrazlin),
     path('Search/', search),
