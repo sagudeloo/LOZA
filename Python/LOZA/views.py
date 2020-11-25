@@ -149,7 +149,7 @@ def trazlin(request):
 def viewTrazlin(request):
     x = request.GET["x"]
     X = x.split(",")
-    X = [int(i) for i in X]
+    X = [float(i) for i in X]
     y = request.GET["y"]
     Y = y.split(",")
     Y = [float(i) for i in Y]
@@ -245,7 +245,4 @@ def viewRaizMul(request):
     N = request.GET["n"]
     N = int(N)
     output = mulRoots(Fx,X0,N)
-    Dic = outputToString(output)
-    data = Dic.split("\n")
-    data[len(data)-2] = ""
     return render(request, "RaizMul.html", {"data":output})
