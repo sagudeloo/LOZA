@@ -482,7 +482,7 @@ def gaussTotalPivot(Ma, b):
     matrixMa = np.matrix(Ma)
     vectorB = np.array(b)
     M = np.column_stack((matrixMa, vectorB))
-    changes = np.array([])
+    changes = np.empty([1, 2])
 
     steps = {'Step 0': np.copy(M)}
 
@@ -499,8 +499,7 @@ def gaussTotalPivot(Ma, b):
                     maxI = (k, j)
         if (maxV > abs(M[i, i])):
             a, b = maxI
-            changes = np.vstack((changes, np.array([i, b]))) if len(
-                changes) else np.array([i, b])
+            changes = np.vstack((changes, np.array([i, b]))) if len(changes) else np.array([i, b])
             aux = np.copy(M[:, b])
             M[:, b] = M[:, i]
             M[:, i] = aux
@@ -528,10 +527,12 @@ def gaussTotalPivot(Ma, b):
     x = backSubst(M)
 
     # Reorganize the solution
-    for i in changes[::-1]:
-        aux = np.copy(x[i[0]])
-        x[i[0]] = x[i[1]]
-        x[i[1]] = aux
+    for i in range(changes.shape[0]-1,-1,-2):
+        a = int(changes[i,0])
+        b = int(changes[i,1])
+        aux = np.copy(x[a])
+        x[a] = x[b]
+        x[b] = aux
 
     output["x"] = x
 
