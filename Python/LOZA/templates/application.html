@@ -13,89 +13,116 @@
 
     <script src="https://www.geogebra.org/apps/deployggb.js"></script>
     <script>
-        var ggbApp = new GGBApplet({ "appName": "graphing", "width": 800, "height": 600, "showToolBar": true, "showAlgebraInput": true, "showMenuBar": true }, true);
+        var ggbApp = new GGBApplet({ "appName": "graphing", "width": screen.width * 0.5, "height": screen.height * 0.6, "showToolBar": true, "showAlgebraInput": true, "showMenuBar": true }, true);
         window.addEventListener("load", function () {
             ggbApp.inject('ggb-element');
         });
+        var grapher = document.getElementById("Grapher");
+        grapher.style.width = screen.width * 0.55;
+        grapher.style.height = screen.height * 0.65;
     </script>
 
     <div class="container" style="padding: 30pt 0;">
 
         <div class="container" style="margin: 20pt 0;">
-            <div class="row justify-content-md-center">
-                <div class="col-md-auto">
-                    <p class="h3">Select the method which you want to use</p>
-                </div>
-            </div>
-            <div class="row justify-content-md-center">
-                <div class="col-md-auto">
-                    <div class="dropdown ">
-                        <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Methods
-                        </a>
-
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="/incrementalS/?method=Incremental+Search">Incremental
-                                Search</a>
-                            <a class="dropdown-item" href="/lufact/?method=LU+With+Gaussian+Elimination">LU With
-                                Gaussian Elimination</a>
-                            <a class="dropdown-item" href="/lufact/?method=LU+With+Partial+Pivot">LU With Partial
-                                Pivot</a>
-                            <a class="dropdown-item" href="/lufact/?method=Crout">Crout</a>
-                            <a class="dropdown-item" href="/lufact/?method=Doolittle">Doolittle</a>
-                            <a class="dropdown-item" href="/lufact/?method=Cholesky">Cholesky</a>
-                            <a class="dropdown-item" href="/gauss/?method=Simple Gaussian+Elimination">Simple Gaussian
-                                Elimination</a>
-                            <a class="dropdown-item"
-                                href="/gauss/?method=Gaussian+Elimination+With+Partial+Pivoting">Gaussian Elimination
-                                With Partial Pivoting</a>
-                            <a class="dropdown-item"
-                                href="/gauss/?method=Gaussian+Elimination+With+Total+Pivoting">Gaussian Elimination With
-                                Total Pivoting</a>
-                            <a class="dropdown-item" href="/trazlin/">LinearTracers</a>
-                            <a class="dropdown-item" href="/trazlin/">QuadraticPlotters</a>
-                            <a class="dropdown-item" href="/trazlin/">CubicTracers</a>
-                            <a class="dropdown-item" href="/RaizMul/">Multiple Roots</a>
-                            <a class="dropdown-item" href="/NewtPoint/">Newton</a>
-                            <a class="dropdown-item" href="/NewtPoint/">Fixed Point</a>
-                            <a class="dropdown-item" href="/BisecReg/">Bisection</a>
-                            <a class="dropdown-item" href="/BisecReg/">False Rule</a>
-                            <a class="dropdown-item" href="/BisecReg/">Secant</a>
-                        </div>
+            <div class="container">
+                <div class="row justify-content-md-center">
+                    <div class="col-md-auto">
+                        <p class="h3">Select the method that you want to use</p>
                     </div>
                 </div>
-                <div class="col-md-auto">
-                    <button class="btn btn-dark" type="button" data-toggle="collapse" data-target="#Grapher"
-                        aria-expanded="false" aria-controls="Grapher">Grapher</button>
+                <div class="row justify-content-md-center" style="margin: 10pt 0;">
+                    <div class="col-md-auto">
+                        <a class="btn btn-dark" type="button" aria-labelledby="homeButton" href="/">Home</a>
+                    </div>
+                    <div class="col-md-auto">
+                        <div class="dropdown ">
+                            <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Methods
+                            </a>
+
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item" href="/incrementalS/?method=Incremental+Search">Incremental
+                                    Search</a>
+                                <a class="dropdown-item" href="/lufact/?method=LU+With+Gaussian+Elimination">LU With
+                                    Gaussian Elimination</a>
+                                <a class="dropdown-item" href="/lufact/?method=LU+With+Partial+Pivot">LU With Partial
+                                    Pivot</a>
+                                <a class="dropdown-item" href="/lufact/?method=Crout">Crout</a>
+                                <a class="dropdown-item" href="/lufact/?method=Doolittle">Doolittle</a>
+                                <a class="dropdown-item" href="/lufact/?method=Cholesky">Cholesky</a>
+                                <a class="dropdown-item" href="/gauss/?method=Simple+Gaussian+Elimination">Simple
+                                    Gaussian
+                                    Elimination</a>
+                                <a class="dropdown-item"
+                                    href="/gauss/?method=Gaussian+Elimination+With+Partial+Pivoting">Gaussian
+                                    Elimination
+                                    With Partial Pivoting</a>
+                                <a class="dropdown-item"
+                                    href="/gauss/?method=Gaussian+Elimination+With+Total+Pivoting">Gaussian Elimination
+                                    With
+                                    Total Pivoting</a>
+                                <a class="dropdown-item" href="/trazlin/?method=Linear+Tracers">Linear Tracers</a>
+                                <a class="dropdown-item" href="/trazlin/?method=Quadratic+Tracers">Quadratic Tracers</a>
+                                <a class="dropdown-item" href="/trazlin/?method=Cubic+Tracers">Cubic Tracers</a>
+                                <a class="dropdown-item" href="/RaizMul/">Multiple Roots</a>
+                                <a class="dropdown-item" href="/NewtPoint/?method=Newton">Newton</a>
+                                <a class="dropdown-item" href="/NewtPoint/?method=Fixed+Point">Fixed Point</a>
+                                <a class="dropdown-item" href="/BisecReg/?method=Bisection">Bisection</a>
+                                <a class="dropdown-item" href="/BisecReg/?method=False+Rule">False Rule</a>
+                                <a class="dropdown-item" href="/BisecReg/?method=Secant">Secant</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-auto">
+                        <button class="btn btn-dark" type="button" data-toggle="collapse" data-target="#Grapher"
+                            aria-expanded="false" aria-controls="Grapher">Grapher</button>
+                    </div>
                 </div>
-            </div>
-            <div class="row justify-content-md-center">
-                <div class="col">
-                    <div class="collapse multi-collapse" id="Grapher">
-                        <div class="card card-body ">
-                            <div class="row justify-content-md-center">
-                                <div class="col justify-content-md-center">
-                                    <div id="ggb-element"></div>
+                <div class="row justify-content-md-center">
+                    <div class="col">
+                        <div class="collapse multi-collapse" id="Grapher">
+                            <div class="card card-body ">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="container">
+                                            <div id="ggb-element"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
+        </div>
+        {% if errors %}
+        <div class="container">
+            {% for error in errors %}
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-danger" role="alert">
+                        {{error}}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="container">
             {% block content %}
 
             {% endblock %}
-
         </div>
 
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
-            crossorigin="anonymous"></script>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
+        crossorigin="anonymous"></script>
 
 </body>
 

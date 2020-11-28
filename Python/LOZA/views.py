@@ -7,7 +7,7 @@ from numpy.lib import scimath
 
 def incrementalSearch(request):
 
-    if len(request.GET)>1:
+    if len(request.GET)>=4:
         fx = request.GET["function"]
         x0 = float(request.GET["x0"])
         dx = float(request.GET["dx"])
@@ -19,39 +19,48 @@ def incrementalSearch(request):
 
 def LUFact(request):
     output = ""
-    error = ""
+    errors = ""
     method = request.GET["method"]
-    if len(request.GET)>1:
+    if len(request.GET)>=3:
         Ma = toMatrix(request.GET["Ma"])
         b = toVector(request.GET["b"])
         if(method == "LU With Gaussian Elimination"):
-            output = preRenderLU(methods.LUSimple(Ma, b))
+            rawOutput = methods.LUSimple(Ma, b)
         elif (method == "LU With Partial Pivot"):
-            output = preRenderLU(methods.LUPartialPivot(Ma, b))
+            rawOutput = methods.LUPartialPivot(Ma, b)
         elif (method == "Crout"):
-            output = preRenderLU(methods.crout(Ma, b))
+            rawOutput = methods.crout(Ma, b)
         elif (method == "Doolittle"):
-            output = preRenderLU(methods.doolittle(Ma, b))
+            rawOutput = methods.doolittle(Ma, b)
         elif (method == "Cholesky"):
-            output = preRenderLU(methods.cholesky(Ma, b))
+            rawOutput = methods.cholesky(Ma, b)
 
-    return render(request, 'lufact.html', {"method": method, "output": output, "error": error})
+        errors = rawOutput["errors"]
+        print("errors",errors)
+        if(len(errors)==0):
+            output = preRenderLU(rawOutput)
+
+    return render(request, 'lufact.html', {"method": method, "output": output, "errors": errors})
 
 def gauss(request):
     output = ""
-    error = ""
+    errors = ""
     method = request.GET["method"]
-    if len(request.GET)>1:
+    if len(request.GET)>=3:
         Ma = toMatrix(request.GET["Ma"])
         b = toVector(request.GET["b"])
         if(method == "Simple Gaussian Elimination"):
-            output = preRenderGauss(methods.gaussSimple(Ma, b))
+            rawOutput = methods.gaussSimple(Ma, b)
         elif (method == "Gaussian Elimination With Partial Pivoting"):
-            output = preRenderGauss(methods.gaussPartialPivot(Ma, b))
+            rawOutput = methods.gaussPartialPivot(Ma, b)
         elif (method == "Gaussian Elimination With Total Pivoting"):
-            output = preRenderGauss(methods.gaussTotalPivot(Ma, b))
+            rawOutput = methods.gaussTotalPivot(Ma, b)
 
-    return render(request, 'gauss.html', {"method": method, "output": output, "error": error})
+        errors = rawOutput["errors"]
+        if(len(errors)==0):
+            output = preRenderGauss(rawOutput)
+
+    return render(request, 'gauss.html', {"method": method, "output": output, "errors": errors})
 
 def preRenderLU(output):
     results = output["results"]
@@ -144,7 +153,7 @@ from django.http import HttpResponse
 from LOZA.methods import Trazlin,TrazlinQuadratic,TrazlinCubicos,outputToString,TrazlinCubicos,incremSearch,bisec,regulaFalsi,newton,fixedPoint,secan,mulRoots
 
 def trazlin(request):
-    return render(request, "trazlin.html")
+    return render(request, "trazlin.html", {"method": request.GET["method"]})
 
 def viewTrazlin(request):
     x = request.GET["x"]
@@ -153,22 +162,24 @@ def viewTrazlin(request):
     y = request.GET["y"]
     Y = y.split(",")
     Y = [float(i) for i in Y]
-    Type = request.GET["type"]
-    if Type == "LinearTracers":
+    Method = request.GET["method"]
+    if Method == "Linear Tracers":
         output = Trazlin(X,Y)
-        Dic = outputToString(output)
-    elif Type == "QuadraticPlotters":
+    elif Method == "Quadratic Tracers":
         output = TrazlinQuadratic(X,Y)
-        Dic = outputToString(output)
-    else:
+    elif Method == "Cubic Tracers":
         output = TrazlinCubicos(X,Y)
+    TraceCof = ""
+    Traz = ""
+    Errors = output["errors"]
+    if(len(Errors)==0):    
         Dic = outputToString(output)
-    
-    data = Dic.split("\n")
-    TraceCof = [data[7], data[8], data[9]]
-    Traz = [data[12], data[13], data[14]]
+        data = Dic.split("\n")
+        TraceCof = [data[7], data[8], data[9]]
+        Traz = [data[12], data[13], data[14]]
+        
 
-    return render(request, "trazlin.html",{"coef":TraceCof, "tracers":Traz})
+    return render(request, "trazlin.html",{"method": Method, "coef":TraceCof, "tracers":Traz ,"errors":Errors})
 
 def search(request):
     return render(request, "Search.html")
@@ -188,7 +199,7 @@ def viewSearch(request):
     return render(request, "Search.html", {"data":data})
 
 def BisecReg(request):
-    return render(request, "BisecReg.html")
+    return render(request, "BisecReg.html", {"method": request.GET["method"]})
 
 def viewBisecReg(request):
     Fx = request.GET["fx"]
@@ -200,40 +211,38 @@ def viewBisecReg(request):
     Error = float(Error)
     N = request.GET["n"]
     N = int(N)
-    Type = request.GET["type"]
-    if Type == "FalseRule":
+    Method = request.GET["method"]
+    if Method == "False Rule":
         output = regulaFalsi(A,B,Fx,Error,N)
-        Dic = outputToString(output)
-    elif Type == "Secant":
-        output = secan(A,B,Fx,N)
-        Dic = outputToString(output)
-    else:
+    elif Method == "Secant":
+        output = secan(A,B,Fx,Error,N)
+    elif Method == "Bisection":
         output = bisec(A,B,Fx,Error,N)
-        Dic = outputToString(output)
-    data = Dic.split("\n")
-    data[len(data)-2] = ""
-    data[1] = ""
-    data[2] = ""
-    return render(request, "BisecReg.html", {"data":output})
+
+    return render(request, "BisecReg.html", {"method": Method,"data":output})
 
 def NewtPoint(request):
-    return render(request, "NewtonPoint.html")
+    return render(request, "NewtonPoint.html", {"method": request.GET["method"]} )
 
 def viewNewtPoint(request):
     Fx = request.GET["fx"]
-    Gx = request.GET["gx"]
     X0 = request.GET["x0"]
     X0 = float(X0)
+    Tol = request.GET["tol"]
+    Tol = float(Tol)
     N = request.GET["n"]
     N = int(N)
-    Type = request.GET["type"]
-    if Type == "Newton":
-        output = newton(Fx,X0,N)
-        Dic = outputToString(output)
-    else:
-        output = fixedPoint(Fx,Gx,X0,N)
-        Dic = outputToString(output)
-    return render(request, "NewtonPoint.html", {"data":output})
+    Method = request.GET["method"]
+    if Method == "Newton":
+        output = newton(Fx,X0,Tol,N)
+        Errors = output["errors"]
+        #Dic = outputToString(output)
+    elif Method == "Fixed Point":
+        Gx = request.GET["gx"]
+        output = fixedPoint(Fx,Gx,X0,Tol,N)
+        Errors = output["errors"]
+        #Dic = outputToString(output)
+    return render(request, "NewtonPoint.html", {"method": Method, "data":output, "errors":Errors})
 
 def RaizMul(request):
     return render(request,"RaizMul.html")
@@ -244,5 +253,8 @@ def viewRaizMul(request):
     X0 = float(X0)
     N = request.GET["n"]
     N = int(N)
-    output = mulRoots(Fx,X0,N)
-    return render(request, "RaizMul.html", {"data":output})
+    Tol = request.GET["error"]
+    Tol = float(Tol)
+    output = mulRoots(Fx,X0,Tol,N)
+    Errors = output["errors"]
+    return render(request, "RaizMul.html", {"data":output, "errors": Errors})

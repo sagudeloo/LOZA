@@ -1,23 +1,25 @@
 import numpy as np
 import numpy.matlib
 from numpy.lib import scimath
-from sympy import *
+from sympy import sympify, diff, evalf, Abs, Symbol, Subs
 from scipy import linalg
 
-def mulRoots(fx, x0, numMax):
+def mulRoots(fx, x0, tol, numMax):
 
     output = {
         "type": 1,
         "method": "Multi Roots",
         "columns": ["iter","xi","f(xi)","E" ],
-        "iterations": numMax
+        "iterations": numMax,
+        "errors": list()
     }
     results = list()
     
     x = Symbol('x')
     
-    cond = 0.0000001
-    error = 1000
+              
+    cond = tol
+    error = 1.0000
 
     ex = sympify(fx)
 
@@ -35,49 +37,55 @@ def mulRoots(fx, x0, numMax):
     d2_ex2 = d2_ex2.evalf()
 
     i = 0
-    results.append([i, x0, ex_2, error])
-    while((error > cond) and (i < numMax)): 
-        if(i == 0):                    
-            ex_2 = ex.subs(x, xP)
-            ex_2 = ex_2.evalf()
-        else:
-            d_ex2 = d_ex.subs(x, xP)
-            d_ex2 = d_ex2.evalf()
+    results.append([i, '{:^15.7E}'.format(x0), '{:^15.7E}'.format(ex_2)])
+    try:
+        while((error > cond) and (i < numMax)): 
+            if(i == 0):                    
+                ex_2 = ex.subs(x, xP)
+                ex_2 = ex_2.evalf()
+            else:
+                d_ex2 = d_ex.subs(x, xP)
+                d_ex2 = d_ex2.evalf()
 
-            d2_ex2 = d2_ex.subs(x, xP)
-            d2_ex2 = d2_ex2.evalf()
-            
-            xA = xP - (ex_2*d_ex2)/((d_ex2)**2 - ex_2*d2_ex2)
+                d2_ex2 = d2_ex.subs(x, xP)
+                d2_ex2 = d2_ex2.evalf()
+                
+                xA = xP - (ex_2*d_ex2)/((d_ex2)**2 - ex_2*d2_ex2)
 
-            ex_A = ex.subs(x,xA)
-            ex_A = ex_A.evalf()
+                ex_A = ex.subs(x,xA)
+                ex_A = ex_A.evalf()
 
-            error = Abs(xA - xP)
-            error = error.evalf()
-            er = error
-            
-            ex_2 = ex_A
-            xP = xA
-            results.append([i , xA, ex_2, er])
-            print("er",er,"xA",xA)
-        i += 1
+                error = Abs(xA - xP)
+                error = error.evalf()
+                er = error
+                
+                ex_2 = ex_A
+                xP = xA
+
+                results.append([i , '{:^15.7E}'.format(float(xA)), '{:^15.7E}'.format(float(ex_2)), '{:^15.7E}'.format(float(er))])
+            i += 1
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output        
+    
     output["results"] = results
     output["root"] = xA
     return output
 
 
-def newton(fx, x0, numMax):
+def newton(fx, x0, tol, numMax):
     output = {
         "type": 1,
         "method": "Newton",
         "columns": ["iter","xi","f(xi)","E" ],
-        "iterations": numMax
+        "iterations": numMax,
+        "errors": list()
     }
     results = list()
     
     x = Symbol('x')
     
-    cond = 0.0000001
+    cond = tol
     error = 1000
 
     ex = sympify(fx)
@@ -92,89 +100,89 @@ def newton(fx, x0, numMax):
     d_ex2 = d_ex2.evalf()
 
     i = 0
-    results.append([i, x0, ex_2, error])
-    while((error > cond) and (i < numMax)): 
-        if(i == 0):                    
-            ex_2 = ex.subs(x, xP)
-            ex_2 = ex_2.evalf()
-        else:
-            d_ex2 = d_ex.subs(x, xP)
-            d_ex2 = d_ex2.evalf()
-            
-            xA = xP - (ex_2/d_ex2)
+    try:
+        results.append([i, '{:^15.7f}'.format(float(x0)), '{:^15.7E}'.format(float(ex_2))])
+        while((error > cond) and (i < numMax)): 
+            if(i == 0):                    
+                ex_2 = ex.subs(x, xP)
+                ex_2 = ex_2.evalf()
+            else:
+                d_ex2 = d_ex.subs(x, xP)
+                d_ex2 = d_ex2.evalf()
+                
+                xA = xP - (ex_2/d_ex2)
 
-            ex_A = ex.subs(x,xA)
-            ex_A = ex_A.evalf()
+                ex_A = ex.subs(x,xA)
+                ex_A = ex_A.evalf()
 
-            error = Abs(xA - xP)
-            error = error.evalf()
-            er = error
-            
-            ex_2 = ex_A
-            xP = xA
-            results.append([i , xA, ex_2, er])
-        i += 1
+                error = Abs(xA - xP)
+                error = error.evalf()
+                er = error
+                
+                ex_2 = ex_A
+                xP = xA
+                results.append([i , '{:^15.7f}'.format(float(xA)), '{:^15.7E}'.format(float(ex_2)), '{:^15.7E}'.format(float(er))])
+            i += 1
+    except BaseException as e:
+       output["errors"].append("Error in data: " + str(e))
+       return output
+    
     output["results"] = results
     output["root"] = xA
     return output
 
-def fixedPoint(fx, gx, x0, numMax):
+def fixedPoint(fx, gx, x0, tol, numMax):
 
     output = {
         "type": 1,
         "method": "Fixed point",
-        "columns": ["iter","xi","f(xi)","E" ],
-        "iterations": numMax
+        "columns": ["iter","xi","g(xi)","f(xi)","E" ],
+        "iterations": numMax,
+        "errors": list()
     }
     results = list()
+    
     x = Symbol('x')
-    i = 0
-    cond = 0.0000001
-    error = 1.0000000
+    i = 1
+    cond = tol
+    error = 1.000
+    
     ex = sympify(fx)
-
-    y = x0
-    ex_2 = 0
-
     rx = sympify(gx)
 
-    y = x0
-    ex_2 = 0
+    xP = x0
+    xA = 0.0
 
-    rx = sympify(gx)
+    ea = ex.subs(x, xP)
+    ea = ea.evalf()
 
-    rx_2 = 0
+    ra = rx.subs(x, xP)
+    ra = ra.evalf()
 
-    while((error > cond) and (i < numMax)):
-        if i == 0:
+    try:
+        results.append([0, '{:^15.7f}'.format(float(xA)), '{:^15.7f}'.format(float(ra)), '{:^15.7E}'.format(float(ea))])
+        while((error > cond) and (i < numMax)):
+        
+            ra = rx.subs(x,xP)
+            xA = ra.evalf()
 
-            ex_2 = ex.subs(x, y)
-            ex_2 = ex_2.evalf()
+            ea = ex.subs(x, xP)
+            ea = ea.evalf()
 
-            rx_2 = rx.subs(x, y)
-            rx_2 = rx_2.evalf()
+            error = Abs(xA - xP)
 
-            results.append([i, x0, ex_2])
-        else:
-            y = rx_2.evalf()
+            xP = xA
+            
+            results.append([i, '{:^15.7f}'.format(float(xA)), '{:^15.7f}'.format(float(ra)), '{:^15.7E}'.format(float(ea)), '{:^15.7E}'.format(float(error))])
 
-            ex_2 = ex.subs(x, y)
-            ex_2 = ex_2.evalf()
-
-            rx_2 = rx.subs(x, y)
-            rx_2 = rx_2.evalf()
-            error = Abs(y - x0)
-
-            er = sympify(error)
-            error = er.evalf()
-
-            x0 = y
-
-            results.append([i, x0, ex_2,error])
-        i += 1
-
+            i += 1
+    
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
+    
     output["results"] = results
-    output["root"] = y
+    output["root"] = xA
     return output
 
 def incremSearch(fx, x0, d, numMax):
@@ -182,6 +190,7 @@ def incremSearch(fx, x0, d, numMax):
     output = {
         "type": 0,
         "method": "Incremental Search",
+        "errors": list()
     }
     results = list()
     x = Symbol('x')
@@ -192,23 +201,28 @@ def incremSearch(fx, x0, d, numMax):
     y = x0
     ex_2 = 0.1
     ex_3 = 0.1
-    while (i < numMax):
-        if i == 0:
-            ex_2 = ex.subs(x, y)
-            ex_2 = ex_2.evalf()
-        else:
-            x0 = y
-            y = y + d
+    try:
+        while (i < numMax):
+            if i == 0:
+                ex_2 = ex.subs(x, y)
+                ex_2 = ex_2.evalf()
+            else:
+                x0 = y
+                y = y + d
 
-            ex_3 = ex_2
+                ex_3 = ex_2
 
-            ex_2 = ex.subs(x, y)
-            ex_2 = ex_2.evalf()
+                ex_2 = ex.subs(x, y)
+                ex_2 = ex_2.evalf()
 
-            if (ex_2*ex_3 < 0):
-                results.append([x0, y])
+                if (ex_2*ex_3 < 0):
+                    results.append(['{:^15.7f}'.format(float(x0)), '{:^15.7f}'.format(float(y))])
 
-        i += 1
+            i += 1
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output  
+    
     output["results"] = results
     return output
 
@@ -218,7 +232,8 @@ def bisec(a, b, fx, Error,numMax):
         "type": 1,
         "method": "Bisection",
         "columns": ["iter","a","xm", "b","f(xm)","E" ],
-        "iterations": numMax
+        "iterations": numMax,
+        "errors": list()
     }
     results = list()
     x = Symbol('x')
@@ -227,27 +242,22 @@ def bisec(a, b, fx, Error,numMax):
     error = 1.0000000
 
     ex = sympify(fx)
+    
+    ea = ex.subs(x, a)
+    ea = ea.evalf()
 
-    xm = 0
-    xm0 = 0
-    ex_2 = 0
+    xm0 = 0.0
     ex_3 = 0
 
-    w = 0
+    xm = (a + b)/2
 
-    while (error > cond) and (i < numMax):
-        if i == 0:
-            xm = (a + b)/2
+    ex_3 = ex.subs(x, xm)
+    ex_3 = ex_3.evalf()
 
-            ex_2 = ex.subs(x, xm)
-            ex_3 = ex_2.evalf()
-
-            ex_2 = ex.subs(x, a)
-            ex_2 = ex_2.evalf()
-            results.append([i, a, xm, b, ex_3])
-        else:
-
-            if (w < 0):
+    results.append([0, '{:^15.7f}'.format(a), '{:^15.7f}'.format(xm), '{:^15.7f}'.format(b), '{:^15.7E}'.format(ex_3)])
+    try:
+        while (error > cond) and (i < numMax):
+            if (ea*ex_3 < 0):
                 b = xm
             else:
                 a = xm
@@ -255,22 +265,17 @@ def bisec(a, b, fx, Error,numMax):
             xm0 = xm
             xm = (a+b)/2
 
-            ex_2 = ex.subs(x, xm)
-            ex_3 = ex_2.evalf()
-
-            ex_2 = ex.subs(x, a)
-            ex_2 = ex_2.evalf()
+            ex_3 = ex.subs(x, xm)
+            ex_3 = ex_3.evalf()
 
             error = Abs(xm-xm0)
-            er = sympify(error)
-            error = er.evalf()
 
-            if (ex_2*ex_3 < 0):
-                w = -1
-            else:
-                w = 1
-            results.append([i, a, xm, b, ex_3, error])
-        i += 1
+            results.append([i, '{:^15.7f}'.format(a), '{:^15.7f}'.format(xm), '{:^15.7f}'.format(b), '{:^15.7E}'.format(ex_3), '{:^15.7E}'.format(error)])
+            
+            i += 1
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return
 
     output["results"] = results
     output["root"] = xm
@@ -282,7 +287,8 @@ def regulaFalsi(a, b, fx, Error,numMax):
         "type": 1,
         "method": "Regula falsi",
         "columns": ["iter","a","xm", "b","f(xm)","E" ],
-        "iterations": numMax
+        "iterations": numMax,
+        "errors": list()
     }
     results = list()
     x = Symbol('x')
@@ -299,63 +305,68 @@ def regulaFalsi(a, b, fx, Error,numMax):
     ex_a = 0
     ex_b = 0
 
-    while (error > cond) and (i < numMax):
-        if i == 1:
-            ex_2 = ex.subs(x, a)
-            ex_2 = ex_2.evalf()
-            ex_a = ex_2
+    try:
+        while (error > cond) and (i < numMax):
+            if i == 1:
+                ex_2 = ex.subs(x, a)
+                ex_2 = ex_2.evalf()
+                ex_a = ex_2
 
-            ex_2 = ex.subs(x, b)
-            ex_2 = ex_2.evalf()
-            ex_b = ex_2
+                ex_2 = ex.subs(x, b)
+                ex_2 = ex_2.evalf()
+                ex_b = ex_2
 
-            xm = (ex_b*a - ex_a*b)/(ex_b-ex_a)
-            ex_3 = ex.subs(x, xm)
-            ex_3 = ex_3.evalf()
-            results.append([i, a, xm, b, ex_3])
-        else:
-
-            if (ex_a*ex_3 < 0):
-                b = xm
+                xm = (ex_b*a - ex_a*b)/(ex_b-ex_a)
+                ex_3 = ex.subs(x, xm)
+                ex_3 = ex_3.evalf()
+                results.append([i, '{:^15.7f}'.format(a), '{:^15.7f}'.format(xm), '{:^15.7f}'.format(b), '{:^15.7E}'.format(ex_3)])
             else:
-                a = xm
 
-            xm0 = xm
-            ex_2 = ex.subs(x, a)
-            ex_2 = ex_2.evalf()
-            ex_a = ex_2
+                if (ex_a*ex_3 < 0):
+                    b = xm
+                else:
+                    a = xm
 
-            ex_2 = ex.subs(x, b)
-            ex_2 = ex_2.evalf()
-            ex_b = ex_2
+                xm0 = xm
+                ex_2 = ex.subs(x, a)
+                ex_2 = ex_2.evalf()
+                ex_a = ex_2
 
-            xm = (ex_b*a - ex_a*b)/(ex_b-ex_a)
+                ex_2 = ex.subs(x, b)
+                ex_2 = ex_2.evalf()
+                ex_b = ex_2
 
-            ex_3 = ex.subs(x, xm)
-            ex_3 = ex_3.evalf()
+                xm = (ex_b*a - ex_a*b)/(ex_b-ex_a)
 
-            error = Abs(xm-xm0)
-            er = sympify(error)
-            error = er.evalf()
-            results.append([i, a, xm, b, ex_3, error])
-        i += 1
+                ex_3 = ex.subs(x, xm)
+                ex_3 = ex_3.evalf()
+
+                error = Abs(xm-xm0)
+                er = sympify(error)
+                error = er.evalf()
+                results.append([i, '{:^15.7f}'.format(a), '{:^15.7f}'.format(xm), '{:^15.7f}'.format(b), '{:^15.7E}'.format(ex_3), '{:^15.7E}'.format(error)])
+            i += 1
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return
 
     output["results"] = results
     output["root"] = xm
     return output
 
-def secan(x0, x1, fx, numMax):
+def secan(x0, x1, fx, tol, numMax):
 
     output = {
         "type": 1,
         "method": "Secant",
         "columns": ["iter", "xi", "f(xi)","E" ],
-        "iterations": numMax
+        "iterations": numMax,
+        "errors": list()
     }
     results = list()
     x = Symbol('x')
     i = 0
-    cond = 0.0000001
+    cond = tol
     error = 1.0000000
 
     ex = sympify(fx)
@@ -364,31 +375,34 @@ def secan(x0, x1, fx, numMax):
     ex_0 = ex
     ex_1 = ex
 
-    while((error > cond) and (i < numMax)):
-        if i == 0:
-            ex_0 = ex.subs(x, x0)
-            ex_0 = ex_0.evalf()
-            results.append([i, x0, ex_0])
-        elif i == 1:
-            ex_1 = ex.subs(x, x1)
-            ex_1 = ex_1.evalf()
-            results.append([i, x1, ex_1])
-        else:
-            y = x1
-            x1 = x1 - (ex_1*(x1 - x0)/(ex_1 - ex_0))
-            x0 = y
+    try:
+        while((error > cond) and (i < numMax)):
+            if i == 0:
+                ex_0 = ex.subs(x, x0)
+                ex_0 = ex_0.evalf()
+                results.append([i, '{:^15.7f}'.format(float(x0)), '{:^15.7E}'.format(float(ex_0))])
+            elif i == 1:
+                ex_1 = ex.subs(x, x1)
+                ex_1 = ex_1.evalf()
+                results.append([i, '{:^15.7f}'.format(float(x1)), '{:^15.7E}'.format(float(ex_1))])
+            else:
+                y = x1
+                x1 = x1 - (ex_1*(x1 - x0)/(ex_1 - ex_0))
+                x0 = y
 
-            ex_0 = ex_1.subs(x, x0)
-            ex_0 = ex_1.evalf()
+                ex_0 = ex.subs(x, x0)
+                ex_0 = ex_1.evalf()
 
-            ex_1 = ex.subs(x, x1)
-            ex_1 = ex_1.evalf()
+                ex_1 = ex.subs(x, x1)
+                ex_1 = ex_1.evalf()
 
-            error = Abs(x1 - x0)
-            er = sympify(error)
-            error = er.evalf()
-            results.append([i, x1, ex_1, error])
-        i += 1
+                error = Abs(x1 - x0)
+                
+                results.append([i, '{:^15.7f}'.format(float(x1)), '{:^15.7E}'.format(float(ex_1)), '{:^15.7E}'.format(float(error))])
+            i += 1
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     output["results"] = results
     output["root"] = y
@@ -399,7 +413,10 @@ def gaussSimple(Ma, b):
 
     output = {
         "type": 2,
-        "method": "Simple Gaussian Elimination"
+        "method": "Simple Gaussian Elimination",
+        "results": "",
+        "errors": list(),
+        "warnings": list()
     }
 
     # Getting matrix dimention
@@ -410,18 +427,26 @@ def gaussSimple(Ma, b):
     vectorB = np.array(b)
     M = np.column_stack((matrixMa, vectorB))
 
-    steps = {'Step 0': np.copy(M)}
+    try:
 
-    # Matrix reduction
-    for i in range(n-1):
-        for j in range(i+1, n):
-            if (M[j, i] != 0):
-                M[j, i:n+1] = M[j, i:n+1]-(M[j, i]/M[i, i])*M[i, i:n+1]
-        steps[f'Step {i+1}'] = np.copy(M)
+        if (np.linalg.det(matrixMa) == 0):
+            raise Exception("Determinant of this matrix  is equal to zero")
+        steps = {'Step 0': np.copy(M)}
 
-    output["results"] = steps
+        # Matrix reduction
+        for i in range(n-1):
+            for j in range(i+1, n):
+                if (M[j, i] != 0):
+                    M[j, i:n+1] = M[j, i:n+1]-(M[j, i]/M[i, i])*M[i, i:n+1]
+            steps[f'Step {i+1}'] = np.copy(M)
 
-    output["x"] = backSubst(M)
+        output["results"] = steps
+
+        output["x"] = backSubst(M)
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
+
 
     return output
 
@@ -430,7 +455,9 @@ def gaussPartialPivot(Ma, b):
 
     output = {
         "type": 2,
-        "method": "Gaussian Elimination With Partial Pivoting"
+        "method": "Gaussian Elimination With Partial Pivoting",
+        "errors": list(),
+        "warnings": list()
     }
 
     # Getting matrix dimention
@@ -441,30 +468,39 @@ def gaussPartialPivot(Ma, b):
     vectorB = np.array(b)
     M = np.column_stack((matrixMa, vectorB))
 
-    steps = {'Step 0': np.copy(M)}
+    try:
+        if (np.linalg.det(matrixMa) == 0):
+            raise Exception("Determinant of this matrix  is equal to zero")
+        steps = {'Step 0': np.copy(M)}
 
-    # Matrix reduction
-    for i in range(n-1):
-        # Row swapping
-        maxV = float('-inf')    # Max value in the column
-        maxI = None             # Index of the max value
-        for j in range(i+1, n):
-            if(maxV < abs(M[j, i])):
-                maxV = M[j, i]
-                maxI = j
-        if (maxV > abs(M[i, i])):
-            aux = np.copy(M[maxI, i:n+1])
-            M[maxI, i:n+1] = M[i, i:n+1]
-            M[i, i:n+1] = aux
+        # Matrix reduction
+        for i in range(n-1):
+            # Row swapping
+            maxV = float('-inf')    # Max value in the column
+            maxI = None             # Index of the max value
+            for j in range(i+1, n):
+                if(maxV < abs(M[j, i])):
+                    maxV = M[j, i]
+                    maxI = j
+            if (maxV > abs(M[i, i])):
+                aux = np.copy(M[maxI, i:n+1])
+                M[maxI, i:n+1] = M[i, i:n+1]
+                M[i, i:n+1] = aux
 
-        for j in range(i+1, n):
-            if (M[j, i] != 0):
-                M[j, i:n+1] = M[j, i:n+1]-(M[j, i]/M[i, i])*M[i, i:n+1]
-        steps[f'Step {i+1}'] = np.copy(M)
+            for j in range(i+1, n):
+                if (M[j, i] != 0):
+                    M[j, i:n+1] = M[j, i:n+1]-(M[j, i]/M[i, i])*M[i, i:n+1]
+            steps[f'Step {i+1}'] = np.copy(M)
 
-    output["results"] = steps
+        output["results"] = steps
 
-    output["x"] = backSubst(M)
+        output["x"] = backSubst(M)
+        
+    
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
+    
 
     return output
 
@@ -473,7 +509,9 @@ def gaussTotalPivot(Ma, b):
 
     output = {
         "type": 2,
-        "method": "Gaussian Elimination With Total Pivoting"
+        "method": "Gaussian Elimination With Total Pivoting",
+        "errors": list(),
+        "warnings": list()
     }
 
     # Getting matrix dimention
@@ -485,42 +523,49 @@ def gaussTotalPivot(Ma, b):
     M = np.column_stack((matrixMa, vectorB))
     changes = np.empty([1, 2])
 
-    steps = {'Step 0': np.copy(M)}
+    try:
+        
+        if (np.linalg.det(matrixMa) == 0):
+            raise Exception("Determinant of this matrix  is equal to zero")
+        steps = {'Step 0': np.copy(M)}
 
-    # Matrix reduction
-    for i in range(n-1):
-        # Column swaping
-        maxV = float('-inf')    # Max value in the in the sub matrix
-        maxI = None             # Index of the max value
+        # Matrix reduction
+        for i in range(n-1):
+            # Column swaping
+            maxV = float('-inf')    # Max value in the in the sub matrix
+            maxI = None             # Index of the max value
 
-        for j in range(i+1, n):
-            for k in range(i, n):
-                if(maxV < abs(M[k, j])):
-                    maxV = M[k, j]
-                    maxI = (k, j)
-        if (maxV > abs(M[i, i])):
-            a, b = maxI
-            changes = np.vstack((changes, np.array([i, b]))) if len(changes) else np.array([i, b])
-            aux = np.copy(M[:, b])
-            M[:, b] = M[:, i]
-            M[:, i] = aux
+            for j in range(i+1, n):
+                for k in range(i, n):
+                    if(maxV < abs(M[k, j])):
+                        maxV = M[k, j]
+                        maxI = (k, j)
+            if (maxV > abs(M[i, i])):
+                a, b = maxI
+                changes = np.vstack((changes, np.array([i, b]))) if len(changes) else np.array([i, b])
+                aux = np.copy(M[:, b])
+                M[:, b] = M[:, i]
+                M[:, i] = aux
 
-        # Row swaping
-        maxV = float('-inf')    # Max value in the in the same column
-        maxI = None             # Index of the max value
-        for l in range(i+1, n):
-            if(maxV < abs(M[l, i])):
-                maxV = M[l, i]
-                maxI = l
-        if (maxV > abs(M[i, i])):
-            aux = np.copy(M[maxI, i:n+1])
-            M[maxI, i:n+1] = M[i, i:n+1]
-            M[i, i:n+1] = aux
+            # Row swaping
+            maxV = float('-inf')    # Max value in the in the same column
+            maxI = None             # Index of the max value
+            for l in range(i+1, n):
+                if(maxV < abs(M[l, i])):
+                    maxV = M[l, i]
+                    maxI = l
+            if (maxV > abs(M[i, i])):
+                aux = np.copy(M[maxI, i:n+1])
+                M[maxI, i:n+1] = M[i, i:n+1]
+                M[i, i:n+1] = aux
 
-        for j in range(i+1, n):
-            if (M[j, i] != 0):
-                M[j, i:n+1] = M[j, i:n+1]-(M[j, i]/M[i, i])*M[i, i:n+1]
-        steps[f'Step {i+1}'] = np.copy(M)
+            for j in range(i+1, n):
+                if (M[j, i] != 0):
+                    M[j, i:n+1] = M[j, i:n+1]-(M[j, i]/M[i, i])*M[i, i:n+1]
+            steps[f'Step {i+1}'] = np.copy(M)
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     output["results"] = steps
 
@@ -543,7 +588,9 @@ def jacobiM(Ma, Vb, x0, tol, numMax):
     output = {
         "type": 4,
         "method": "Jacobi's Method",
-        "iterations": numMax
+        "iterations": numMax,
+        "errors": list(),
+        "warnings": list()
     }
     
     sX = x0.size
@@ -575,7 +622,6 @@ def jacobiM(Ma, Vb, x0, tol, numMax):
          cont = cont + 1
          steps[f'Step {cont+1}'] = np.copy(xA)
 
-    x = xA
     nIter = cont
     error = E
     
@@ -621,7 +667,6 @@ def gaussSei(Ma, Vb, x0, tol, numMax):
          steps[f'Step {cont+1}'] = np.copy(xA)
          
 
-    x = xA
     nIter = cont
     error = E
     
@@ -666,7 +711,6 @@ def sorM(Ma, Vb, x0, w, tol, numMax):
          cont = cont + 1
          steps[f'Step {cont+1}'] = np.copy(xA)
 
-    x = xA
     nIter = cont
     error = E
     
@@ -755,36 +799,43 @@ def LUSimple(Ma, b):
 
     output = {
         "type": 3,
-        "method": "LU With Gaussian Elimination"
+        "method": "LU With Gaussian Elimination",
+        "results": "",
+        "errors": list(),
+        "warnings": list()
     }
 
     # Initialization
-    matrixMa = np.array(Ma)
-    vectorB = np.array(b).T
+    matrixMa = np.array(Ma).T
     n = matrixMa.shape[0]
     L = np.eye(n)
     U = np.zeros((n,n))
     M = matrixMa
-    steps = {'Step 0': [np.copy(M)]}
     
-    # Factorization
-    for i in range(n-1):
-        for j in range(i+1, n):
-            if not (M[j,i] == 0):
-                L[j,i]=M[j,i]/M[i,i]
-                M[j,i:n]=M[j,i:n]-(M[j,i]/M[i,i])*M[i,i:n]
-        U[i, i:n]=M[i,i:n]
-        U[i+1,i+1:n]=M[i+1,i+1:n]
-        steps[f"Step {i+1}"] = [np.copy(M),{"L:":np.copy(L)},{"U:":np.copy(U)}]
-    U[n-1,n-1]=M[n-1,n-1]
-    
-    output["results"] = steps
+    try:
+        steps = {'Step 0': [np.copy(M)]}
+        
+        # Factorization
+        for i in range(n-1):
+            for j in range(i+1, n):
+                if not (M[j,i] == 0):
+                    L[j,i]=M[j,i]/M[i,i]
+                    M[j,i:n]=M[j,i:n]-(M[j,i]/M[i,i])*M[i,i:n]
+            U[i, i:n]=M[i,i:n]
+            U[i+1,i+1:n]=M[i+1,i+1:n]
+            steps[f"Step {i+1}"] = [np.copy(M),{"L:":np.copy(L)},{"U:":np.copy(U)}]
+        U[n-1,n-1]=M[n-1,n-1]
+        
+        output["results"] = steps
 
-    # Resoults delivery
-    z=forSubst(np.column_stack((L,b)))
-    x=backSubst(np.column_stack((U,z)))
+        # Resoults delivery
+        z=forSubst(np.column_stack((L,b)))
+        x=backSubst(np.column_stack((U,z)))
 
-    output["x"] = x
+        output["x"] = x
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     return output
 
@@ -792,7 +843,10 @@ def LUPartialPivot(Ma, b):
 
     output = {
         "type": 3,
-        "method": "LU With Partial Pivot"
+        "method": "LU With Partial Pivot",
+        "results": "",
+        "errors": list(),
+        "warnings": list()
     }
 
     # Initialization
@@ -803,46 +857,49 @@ def LUPartialPivot(Ma, b):
     U = np.zeros((n,n))
     P = np.eye(n)
     M = matrixMa
+    try:
+        steps = {'Step 0': [np.copy(M)]}
 
-    steps = {'Step 0': [np.copy(M)]}
+        # Factorization
+        for i in range(0,n-1):
+            # row swapping
+            maxV = float('-inf')    # Max value in the column
+            maxI = None             # Index of the max value
+            for j in range(i+1, n):
+                if(maxV < abs(M[j, i])):
+                    maxV = M[j, i]
+                    maxI = j
+            if (maxV > abs(M[i, i])):
+                aux2=np.copy(M[maxI,i:n])
+                aux3=np.copy(P[maxI,:])
+                M[maxI,i:n]=M[i,i:n]
+                P[maxI,:]=P[i,:]
+                M[i,i:n]=aux2
+                P[i,:]=aux3
+                if i>0:
+                    aux4=L[maxI, 0:i-1]
+                    L[maxI, 0:i-1]=L[i,0:i-1]
+                    L[i,0:i-1]=aux4
+            for j in range(i+1, n):
+                if not (M[j,i] == 0):
+                    L[j,i]=M[j,i]/M[i,i]
+                    M[j,i:n]=M[j,i:n]-(M[j,i]/M[i,i])*M[i,i:n]
+            U[i, i:n]=M[i,i:n]
+            U[i+1,i+1:n]=M[i+1,i+1:n]
+            steps[f"Step {i+1}"] = [np.copy(M),{"L:":np.copy(L)},{"U:":np.copy(U)},{"P:":np.copy(P)}]
 
-    # Factorization
-    for i in range(0,n-1):
-        # row swapping
-        maxV = float('-inf')    # Max value in the column
-        maxI = None             # Index of the max value
-        for j in range(i+1, n):
-            if(maxV < abs(M[j, i])):
-                maxV = M[j, i]
-                maxI = j
-        if (maxV > abs(M[i, i])):
-            aux2=np.copy(M[maxI,i:n])
-            aux3=np.copy(P[maxI,:])
-            M[maxI,i:n]=M[i,i:n]
-            P[maxI,:]=P[i,:]
-            M[i,i:n]=aux2
-            P[i,:]=aux3
-            if i>0:
-                aux4=L[maxI, 0:i-1]
-                L[maxI, 0:i-1]=L[i,0:i-1]
-                L[i,0:i-1]=aux4
-        for j in range(i+1, n):
-            if not (M[j,i] == 0):
-                L[j,i]=M[j,i]/M[i,i]
-                M[j,i:n]=M[j,i:n]-(M[j,i]/M[i,i])*M[i,i:n]
-        U[i, i:n]=M[i,i:n]
-        U[i+1,i+1:n]=M[i+1,i+1:n]
-        steps[f"Step {i+1}"] = [np.copy(M),{"L:":np.copy(L)},{"U:":np.copy(U)},{"P:":np.copy(P)}]
+        U[n-1,n-1]=M[n-1,n-1]
 
-    U[n-1,n-1]=M[n-1,n-1]
-
-    output["results"] = steps
+        output["results"] = steps
     
-    # Resoults delivery
-    z=forSubst(np.column_stack((L,P@vectorB)))
-    x=backSubst(np.column_stack((U,z)))
+        # Resoults delivery
+        z=forSubst(np.column_stack((L,P@vectorB)))
+        x=backSubst(np.column_stack((U,z)))
 
-    output["x"] = x
+        output["x"] = x
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     return output
 
@@ -850,7 +907,10 @@ def crout(Ma, b):
 
     output = {
         "type": 3,
-        "method": "Crout"
+        "method": "Crout",
+        "results": "",
+        "errors": list(),
+        "warnings": list()
     }
 
     # Initialization
@@ -859,23 +919,27 @@ def crout(Ma, b):
     L = np.eye(n)
     U = np.eye(n)
 
-    steps = {'Step 0': [np.copy(A)]}
+    try:
+        steps = {'Step 0': [np.copy(A)]}
 
-    # Factorization
-    for i in range(n-1):
-        for j in range(i, n):
-            L[j,i]=A[j,i]-np.dot(L[j,0:i], U[0:i,i].T);
-        for j in range(i+1, n):
-            U[i,j]=(A[i,j]-np.dot(L[i,0:i], U[0:i,j].T))/L[i,i]
-        steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
-    L[n-1,n-1]=A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T)
+        # Factorization
+        for i in range(n-1):
+            for j in range(i, n):
+                L[j,i]=A[j,i]-np.dot(L[j,0:i], U[0:i,i].T);
+            for j in range(i+1, n):
+                U[i,j]=(A[i,j]-np.dot(L[i,0:i], U[0:i,j].T))/L[i,i]
+            steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
+        L[n-1,n-1]=A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T)
 
-    output["results"] = steps
+        output["results"] = steps
 
-    z=forSubst(np.column_stack((L,b)))
-    x=backSubst(np.column_stack((U, z)))
+        z=forSubst(np.column_stack((L,b)))
+        x=backSubst(np.column_stack((U, z)))
 
-    output["x"] = x
+        output["x"] = x
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     return output
 
@@ -883,7 +947,10 @@ def doolittle(Ma, b):
 
     output = {
         "type": 3,
-        "method": "Doolittle"
+        "method": "Doolittle",
+        "results": "",
+        "errors": list(),
+        "warnings": list()
     }
 
     # Initialization
@@ -892,24 +959,28 @@ def doolittle(Ma, b):
     L = np.eye(n)
     U = np.eye(n)
 
-    steps = {'Step 0': [np.copy(A)]}
+    try:
+        steps = {'Step 0': [np.copy(A)]}
 
-    # Factorization
-    for i in range(n-1):
-        for j in range(i, n):
-            U[i,j]=A[i,j]-np.dot(L[i,0:i], U[0:i,j].T)
-        for j in range(i+1, n):
-            L[j,i]=(A[j,i]-np.dot(L[j,0:i], U[0:i,i].T))/U[i,i]
-        steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
-        
-    U[n-1,n-1]=A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T)
+        # Factorization
+        for i in range(n-1):
+            for j in range(i, n):
+                U[i,j]=A[i,j]-np.dot(L[i,0:i], U[0:i,j].T)
+            for j in range(i+1, n):
+                L[j,i]=(A[j,i]-np.dot(L[j,0:i], U[0:i,i].T))/U[i,i]
+            steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
+            
+        U[n-1,n-1]=A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T)
 
-    output["results"] = steps
+        output["results"] = steps
 
-    z=forSubst(np.column_stack((L,b)))
-    x=backSubst(np.column_stack((U, z)))
+        z=forSubst(np.column_stack((L,b)))
+        x=backSubst(np.column_stack((U, z)))
 
-    output["x"] = x
+        output["x"] = x
+    except BaseException as e:
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     return output
 
@@ -917,7 +988,9 @@ def cholesky(Ma, b):
 
     output = {
         "type": 3,
-        "method": "Cholesky"
+        "method": "Cholesky",
+        "results": "",
+        "errors": list(),
     }
 
     # Initialization
@@ -926,26 +999,30 @@ def cholesky(Ma, b):
     L = np.eye(n, dtype=complex)
     U = np.eye(n, dtype=complex)
 
-    steps = {'Step 0': [np.copy(A)]}
+    try:
+        steps = {'Step 0': [np.copy(A)]}
 
-    # Factorization
-    for i in range(n-1):
-        L[i,i]= scimath.sqrt(A[i,i]-np.dot(L[i,0:i], U[0:i,i].T))
-        U[i,i]=L[i,i]
-        for j in range(i+1, n):
-            L[j,i]=(A[j,i]-np.dot(L[j,0:i], U[0:i,i].T))/U[i,i];
-        for j in range(i+1, n):
-            U[i,j]=(A[i,j]-np.dot(L[i,0:i], U[0:i,j].T))/L[i,i]
-        steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
-    L[n-1,n-1]=scimath.sqrt(A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T))
-    U[n-1,n-1]=L[n-1,n-1]
+        # Factorization
+        for i in range(n-1):
+            L[i,i]= scimath.sqrt(A[i,i]-np.dot(L[i,0:i], U[0:i,i].T))
+            U[i,i]=L[i,i]
+            for j in range(i+1, n):
+                L[j,i]=(A[j,i]-np.dot(L[j,0:i], U[0:i,i].T))/U[i,i];
+            for j in range(i+1, n):
+                U[i,j]=(A[i,j]-np.dot(L[i,0:i], U[0:i,j].T))/L[i,i]
+            steps[f"Step {i+1}"] = [{"L:":np.copy(L)},{"U:":np.copy(U)}]
+        L[n-1,n-1]=scimath.sqrt(A[n-1,n-1]-np.dot(L[n-1,0:n-1], U[0:n-1,n-1].T))
+        U[n-1,n-1]=L[n-1,n-1]
 
-    output["results"] = steps
+        output["results"] = steps
 
-    z=forSubst(np.column_stack((L,b)))
-    x=backSubst(np.column_stack((U, z)))
+        z=forSubst(np.column_stack((L,b)))
+        x=backSubst(np.column_stack((U, z)))
 
-    output["x"] = x
+        output["x"] = x
+    except BaseException as e:  
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     return output
 
@@ -972,13 +1049,13 @@ def Lagrange(X,Y):
         i += 1
     output ["results"] = L
     output ["x"] = Y
-    Coef = Y.dot(L)
     return output
 
 def Trazlin(X,Y):
     output = {
         "type": 8,
-        "method": "Tracers"
+        "method": "Linear Tracers",
+        "errors" : list()
     }
     X = np.array(X)
     Y = np.array(Y)
@@ -989,34 +1066,40 @@ def Trazlin(X,Y):
     Coef = np.zeros((n-1,2))
     i = 0
     #Interpolating condition
-    while i < X.size-1:
-        A[i+1,[2*i+1-1,2*i+1]]= [X[i+1],1] 
-        b[i+1]=Y[i+1]
-        i = i+1
+    try:
+        while i < X.size-1:
+            A[i+1,[2*i+1-1,2*i+1]]= [X[i+1],1] 
+            b[i+1]=Y[i+1]
+            i = i+1
 
-    A[0,[0,1]] = [X[0],1] 
-    b[0] = Y[0]
-    i = 1
-    #Condition of continuity
-    while i < X.size-1:
-        A[X.size-1+i,2*i-2:2*i+2] = np.hstack((X[i],1,-X[i],-1))
-        b[X.size-1+i] = 0
-        i = i+1
+        A[0,[0,1]] = [X[0],1] 
+        b[0] = Y[0]
+        i = 1
+        #Condition of continuity
+        while i < X.size-1:
+            A[X.size-1+i,2*i-2:2*i+2] = np.hstack((X[i],1,-X[i],-1))
+            b[X.size-1+i] = 0
+            i = i+1
 
-    Saux = linalg.solve(A,b)
-    #Order Coefficients
-    i = 0
-    while i < X.size-1:
-        Coef[i,:] = [Saux[2*i],Saux[2*i+1]]
-        i = i+1
-
+        Saux = linalg.solve(A,b)
+        #Order Coefficients
+        i = 0
+        while i < X.size-1:
+            Coef[i,:] = [Saux[2*i],Saux[2*i+1]]
+            i = i+1
+        
+    except BaseException as e:  
+        output["errors"].append("Error in data: " + str(e))
+        return output
+    
     output["results"] = Coef
     return output
 
 def TrazlinQuadratic(X,Y):
     output = {
         "type": 8,
-        "method": "Tracers"
+        "method": "Quadratic Tracers",
+        "errors" : list()
     }
     X = np.array(X)
     Y = np.array(Y)
@@ -1026,38 +1109,42 @@ def TrazlinQuadratic(X,Y):
     b = np.zeros((m,1))
     Coef = np.zeros((n-1,3))
     i = 0
-    #Interpolating condition
-    while i < X.size-1:
-        
-        A[i+1,3*i:3*i+3]= np.hstack((X[i+1]**2,X[i+1],1)) 
-        b[i+1]=Y[i+1]
-        i = i+1
+    try:
+        #Interpolating condition
+        while i < X.size-1:
+            
+            A[i+1,3*i:3*i+3]= np.hstack((X[i+1]**2,X[i+1],1)) 
+            b[i+1]=Y[i+1]
+            i = i+1
 
-    A[0,0:3] = np.hstack((X[0]**2,X[0]**1,1))
-    b[0] = Y[0]
-    #Condition of continuity
-    i = 1
-    while i < X.size-1:
-        A[X.size-1+i,3*i-3:3*i+3] = np.hstack((X[i]**2,X[i],1,-X[i]**2,-X[i],-1))
-        b[X.size-1+i] = 0
-        i = i+1
-    #Condition of smoothness
-    i = 1
-    while i < X.size-1:
-        A[2*n-3+i,3*i-3:3*i+3] = np.hstack((2*X[i],1,0,-2*X[i],-1,0))
-        b[2*n-3+i] = 0
-        i = i+1
-    A[m-1,0]=2;
-    b[m-1]=0;
+        A[0,0:3] = np.hstack((X[0]**2,X[0]**1,1))
+        b[0] = Y[0]
+        #Condition of continuity
+        i = 1
+        while i < X.size-1:
+            A[X.size-1+i,3*i-3:3*i+3] = np.hstack((X[i]**2,X[i],1,-X[i]**2,-X[i],-1))
+            b[X.size-1+i] = 0
+            i = i+1
+        #Condition of smoothness
+        i = 1
+        while i < X.size-1:
+            A[2*n-3+i,3*i-3:3*i+3] = np.hstack((2*X[i],1,0,-2*X[i],-1,0))
+            b[2*n-3+i] = 0
+            i = i+1
+        A[m-1,0]=2;
+        b[m-1]=0;
 
-    Saux = linalg.solve(A,b)
-    #Order Coefficients
-    i = 0
-    j = 0
-    while i < n-1:
-        Coef[i,:] = np.hstack((Saux[j],Saux[j+1],Saux[j+2]))
-        i = i+1
-        j = j + 3
+        Saux = linalg.solve(A,b)
+        #Order Coefficients
+        i = 0
+        j = 0
+        while i < n-1:
+            Coef[i,:] = np.hstack((Saux[j],Saux[j+1],Saux[j+2]))
+            i = i+1
+            j = j + 3
+    except BaseException as e:  
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     output["results"] = Coef
     return output
@@ -1065,7 +1152,8 @@ def TrazlinQuadratic(X,Y):
 def TrazlinCubicos(X,Y):
     output = {
         "type": 8,
-        "method": "Tracers"
+        "method": "Cubic Tracers",
+        "errors" : list()
     }
     X = np.array(X)
     Y = np.array(Y)
@@ -1075,49 +1163,53 @@ def TrazlinCubicos(X,Y):
     b = np.zeros((m,1))
     Coef = np.zeros((n-1,4))
     i = 0
-    #Interpolating condition
-    while i < X.size-1:
-        
-        A[i+1,4*i:4*i+4]= np.hstack((X[i+1]**3,X[i+1]**2,X[i+1],1)) 
-        b[i+1]=Y[i+1]
-        i = i+1
+    try:
+        #Interpolating condition
+        while i < X.size-1:
+            
+            A[i+1,4*i:4*i+4]= np.hstack((X[i+1]**3,X[i+1]**2,X[i+1],1)) 
+            b[i+1]=Y[i+1]
+            i = i+1
 
-    A[0,0:4] = np.hstack((X[0]**3,X[0]**2,X[0]**1,1))
-    b[0] = Y[0]
-    #Condition of continuity
-    i = 1
-    while i < X.size-1:
-        A[X.size-1+i,4*i-4:4*i+4] = np.hstack((X[i]**3,X[i]**2,X[i],1,-X[i]**3,-X[i]**2,-X[i],-1))
-        b[X.size-1+i] = 0
-        i = i+1
-    #Condition of smoothness
-    i = 1
-    while i < X.size-1:
-        A[2*n-3+i,4*i-4:4*i+4] = np.hstack((3*X[i]**2,2*X[i],1,0,-3*X[i]**2,-2*X[i],-1,0))
-        b[2*n-3+i] = 0
-        i = i+1
-    
-    #Concavity condition
-    i = 1
-    while i < X.size-1:
-        A[3*n-5+i,4*i-4:4*i+4] = np.hstack((6*X[i],2,0,0,-6*X[i],-2,0,0))
-        b[n+5+i] = 0
-        i = i+1
-    
-    #Boundary conditions  
-    A[m-2,0:2]=[6*X[0],2];
-    b[m-2]=0;
-    A[m-1,m-4:m-2]=[6*X[X.size-1],2];
-    b[m-1]=0;
-    
-    Saux = linalg.solve(A,b)
-    #Order Coefficients
-    i = 0
-    j = 0
-    while i < n-1:
-        Coef[i,:] = np.hstack((Saux[j],Saux[j+1],Saux[j+2],Saux[j+3]))
-        i = i+1
-        j = j + 4
+        A[0,0:4] = np.hstack((X[0]**3,X[0]**2,X[0]**1,1))
+        b[0] = Y[0]
+        #Condition of continuity
+        i = 1
+        while i < X.size-1:
+            A[X.size-1+i,4*i-4:4*i+4] = np.hstack((X[i]**3,X[i]**2,X[i],1,-X[i]**3,-X[i]**2,-X[i],-1))
+            b[X.size-1+i] = 0
+            i = i+1
+        #Condition of smoothness
+        i = 1
+        while i < X.size-1:
+            A[2*n-3+i,4*i-4:4*i+4] = np.hstack((3*X[i]**2,2*X[i],1,0,-3*X[i]**2,-2*X[i],-1,0))
+            b[2*n-3+i] = 0
+            i = i+1
+        
+        #Concavity condition
+        i = 1
+        while i < X.size-1:
+            A[3*n-5+i,4*i-4:4*i+4] = np.hstack((6*X[i],2,0,0,-6*X[i],-2,0,0))
+            b[n+5+i] = 0
+            i = i+1
+        
+        #Boundary conditions  
+        A[m-2,0:2]=[6*X[0],2];
+        b[m-2]=0;
+        A[m-1,m-4:m-2]=[6*X[X.size-1],2];
+        b[m-1]=0;
+        
+        Saux = linalg.solve(A,b)
+        #Order Coefficients
+        i = 0
+        j = 0
+        while i < n-1:
+            Coef[i,:] = np.hstack((Saux[j],Saux[j+1],Saux[j+2],Saux[j+3]))
+            i = i+1
+            j = j + 4
+    except BaseException as e:  
+        output["errors"].append("Error in data: " + str(e))
+        return output
 
     output["results"] = Coef
     return output
@@ -1165,6 +1257,7 @@ def outputAnalyticalMethod(output):
     results = output["results"]
     for j in results:
         for k in j:
+            print(k)
             stringOutput += '|{:^25E}'.format(k)
         stringOutput += "|\n"
     if ("root" in output):
