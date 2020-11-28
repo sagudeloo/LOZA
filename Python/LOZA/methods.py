@@ -65,8 +65,12 @@ def mulRoots(fx, x0, tol, numMax):
                 results.append([i , '{:^15.7E}'.format(float(xA)), '{:^15.7E}'.format(float(ex_2)), '{:^15.7E}'.format(float(er))])
             i += 1
     except BaseException as e:
-        output["errors"].append("Error in data: " + str(e))
-        return output        
+        if str(e)=="can't convert complex to float":
+            output["errors"].append("Error in data: found complex in calculations")
+        else:
+            output["errors"].append("Error in data: " + str(e))
+        
+        return output       
     
     output["results"] = results
     output["root"] = xA
@@ -124,8 +128,12 @@ def newton(fx, x0, tol, numMax):
                 results.append([i , '{:^15.7f}'.format(float(xA)), '{:^15.7E}'.format(float(ex_2)), '{:^15.7E}'.format(float(er))])
             i += 1
     except BaseException as e:
-       output["errors"].append("Error in data: " + str(e))
-       return output
+        if str(e)=="can't convert complex to float":
+            output["errors"].append("Error in data: found complex in calculations")
+        else:
+            output["errors"].append("Error in data: " + str(e))
+        
+        return output
     
     output["results"] = results
     output["root"] = xA
@@ -220,7 +228,11 @@ def incremSearch(fx, x0, d, numMax):
 
             i += 1
     except BaseException as e:
-        output["errors"].append("Error in data: " + str(e))
+        if str(e)=="can't convert complex to float":
+            output["errors"].append("Error in data: found complex in calculations")
+        else:
+            output["errors"].append("Error in data: " + str(e))
+        
         return output  
     
     output["results"] = results
@@ -274,8 +286,12 @@ def bisec(a, b, fx, Error,numMax):
             
             i += 1
     except BaseException as e:
-        output["errors"].append("Error in data: " + str(e))
-        return
+        if str(e)=="can't convert complex to float":
+            output["errors"].append("Error in data: found complex in calculations")
+        else:
+            output["errors"].append("Error in data: " + str(e))
+        
+        return output
 
     output["results"] = results
     output["root"] = xm
@@ -347,8 +363,12 @@ def regulaFalsi(a, b, fx, Error,numMax):
                 results.append([i, '{:^15.7f}'.format(a), '{:^15.7f}'.format(xm), '{:^15.7f}'.format(b), '{:^15.7E}'.format(ex_3), '{:^15.7E}'.format(error)])
             i += 1
     except BaseException as e:
-        output["errors"].append("Error in data: " + str(e))
-        return
+        if str(e)=="can't convert complex to float":
+            output["errors"].append("Error in data: found complex in calculations")
+        else:
+            output["errors"].append("Error in data: " + str(e))
+        
+        return output
 
     output["results"] = results
     output["root"] = xm
@@ -401,7 +421,11 @@ def secan(x0, x1, fx, tol, numMax):
                 results.append([i, '{:^15.7f}'.format(float(x1)), '{:^15.7E}'.format(float(ex_1)), '{:^15.7E}'.format(float(error))])
             i += 1
     except BaseException as e:
-        output["errors"].append("Error in data: " + str(e))
+        if str(e)=="can't convert complex to float":
+            output["errors"].append("Error in data: found complex in calculations")
+        else:
+            output["errors"].append("Error in data: " + str(e))
+        
         return output
 
     output["results"] = results
